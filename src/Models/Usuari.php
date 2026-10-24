@@ -54,4 +54,32 @@ class Usuari
 
         return $usuari;
     }
+
+    public static function all(): array
+    {
+        $stmt = Database::getConnection()->query(
+            'SELECT id, nom, email, rol, created_at FROM Usuari ORDER BY id'
+        );
+
+        return $stmt->fetchAll();
+    }
+
+    public static function update(int $id, string $nom, string $email, string $rol): void
+    {
+        $stmt = Database::getConnection()->prepare(
+            'UPDATE Usuari SET nom = :nom, email = :email, rol = :rol WHERE id = :id'
+        );
+        $stmt->execute([
+            'nom' => $nom,
+            'email' => $email,
+            'rol' => $rol,
+            'id' => $id,
+        ]);
+    }
+
+    public static function delete(int $id): void
+    {
+        $stmt = Database::getConnection()->prepare('DELETE FROM Usuari WHERE id = :id');
+        $stmt->execute(['id' => $id]);
+    }
 }

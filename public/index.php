@@ -22,6 +22,12 @@ try {
     <p><?= htmlspecialchars($status) ?></p>
     <?php if (isset($_SESSION['user_id'])): ?>
         <p>Sessió iniciada com <?= htmlspecialchars($_SESSION['nom']) ?> (<?= htmlspecialchars($_SESSION['rol']) ?>)</p>
+        <?php if ($_SESSION['rol'] === 'admin'): ?>
+            <p><a href="admin/index.php">Zona Admin</a></p>
+        <?php endif; ?>
+        <?php if (in_array($_SESSION['rol'], ['taquiller', 'admin'], true)): ?>
+            <p><a href="treballador/index.php">Zona Treballador</a></p>
+        <?php endif; ?>
         <p><a href="logout.php">Tancar sessió</a></p>
     <?php else: ?>
         <p><a href="login.php">Iniciar sessió</a></p>
