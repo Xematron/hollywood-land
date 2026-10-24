@@ -10,7 +10,7 @@ class Sessio
     {
         $stmt = Database::getConnection()->query(
             'SELECT s.id, s.data, s.hora, s.preu, s.idioma_subtitols,
-                    p.titol, p.durada_min, p.classificacio,
+                    p.id AS pelicula_id, p.titol, p.durada_min, p.classificacio,
                     sa.nom AS sala_nom
              FROM Sessio s
              JOIN Pelicula p ON p.id = s.pelicula_id

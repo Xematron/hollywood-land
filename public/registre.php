@@ -58,5 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
     <p><a href="login.php">Ja tinc compte</a></p>
+<?php require __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>

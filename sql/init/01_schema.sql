@@ -73,9 +73,23 @@ CREATE TABLE Entrada (
 CREATE TABLE Debat (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sessio_id INT NOT NULL,
+    titol VARCHAR(150) NULL,
     descripcio TEXT,
     aforament INT,
+    durada_min INT NOT NULL,
     FOREIGN KEY (sessio_id) REFERENCES Sessio(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE Activitat (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tipus ENUM('taller', 'xerrada', 'podcast', 'altres') NOT NULL DEFAULT 'altres',
+    titol VARCHAR(150) NOT NULL,
+    descripcio TEXT,
+    data DATE NOT NULL,
+    hora TIME NOT NULL,
+    durada_min INT NOT NULL,
+    sala_id INT NULL,
+    FOREIGN KEY (sala_id) REFERENCES Sala(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE InscripcioDebat (

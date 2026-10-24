@@ -49,5 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </form>
 
     <p><a href="registre.php">Crear compte nou</a></p>
+<?php require __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>
