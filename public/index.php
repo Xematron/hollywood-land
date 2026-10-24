@@ -1,16 +1,6 @@
 <?php
 
-spl_autoload_register(function (string $class): void {
-    $prefix = 'HollywoodLand\\';
-    if (!str_starts_with($class, $prefix)) {
-        return;
-    }
-    $relative = substr($class, strlen($prefix));
-    $path = __DIR__ . '/../src/' . str_replace('\\', '/', $relative) . '.php';
-    if (is_file($path)) {
-        require $path;
-    }
-});
+require __DIR__ . '/../src/bootstrap.php';
 
 use HollywoodLand\Config\Database;
 
@@ -30,5 +20,11 @@ try {
 <body>
     <h1>Hollywood Land</h1>
     <p><?= htmlspecialchars($status) ?></p>
+    <?php if (isset($_SESSION['user_id'])): ?>
+        <p>Sessió iniciada com <?= htmlspecialchars($_SESSION['nom']) ?> (<?= htmlspecialchars($_SESSION['rol']) ?>)</p>
+        <p><a href="logout.php">Tancar sessió</a></p>
+    <?php else: ?>
+        <p><a href="login.php">Iniciar sessió</a></p>
+    <?php endif; ?>
 </body>
 </html>
