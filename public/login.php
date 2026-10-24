@@ -47,5 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <button type="submit">Entrar</button>
     </form>
+
+    <p><a href="registre.php">Crear compte nou</a></p>
 </body>
 </html>
