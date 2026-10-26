@@ -41,12 +41,14 @@ a:hover {
 .navbar-links {
     border-top: 1px solid rgba(245, 236, 215, 0.15);
     background-color: var(--hl-gold) !important;
-    .links {
-        text-decoration: none;
-    }
-    .links:hover {
-        color: white;
-    }
+}
+
+.navbar-links .links {
+    text-decoration: none;
+}
+
+.navbar-links .links:hover {
+    color: white;
 }
 
 footer.bg-dark {

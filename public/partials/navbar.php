@@ -18,7 +18,7 @@
             </div>
         </div>
     </nav>
-    <nav class="navbar-dark navbar-links py-1 mb-4">
+    <nav class="navbar navbar-dark navbar-links py-1 mb-4">
         <div class="container my-2">
             <a class="links text-chestnut" href="/cartellera.php">Cartellera</a>
         </div>
