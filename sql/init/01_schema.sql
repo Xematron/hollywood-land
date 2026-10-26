@@ -38,6 +38,7 @@ CREATE TABLE Butaca (
     sala_id INT NOT NULL,
     fila VARCHAR(5) NOT NULL,
     numero INT NOT NULL,
+    operativa TINYINT(1) NOT NULL DEFAULT 1,
     UNIQUE (sala_id, fila, numero),
     FOREIGN KEY (sala_id) REFERENCES Sala(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
