@@ -98,34 +98,12 @@ unset($dia);
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <title>Hollywood Land</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<?php $pageTitle = 'Hollywood Land'; require __DIR__ . '/partials/head.php'; ?>
 </head>
 <body>
-<nav class="navbar navbar-dark bg-dark mb-4">
-    <div class="container">
-        <span class="navbar-brand">Hollywood Land</span>
-        <div>
-            <a class="btn btn-sm btn-outline-light me-2" href="cartellera.php">Cartellera</a>
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <span class="text-light me-3"><?= htmlspecialchars($_SESSION['nom']) ?> (<?= htmlspecialchars($_SESSION['rol']) ?>)</span>
-                <?php if ($_SESSION['rol'] === 'admin'): ?>
-                    <a class="btn btn-sm btn-outline-light me-2" href="admin/index.php">Zona Admin</a>
-                <?php endif; ?>
-                <?php if (in_array($_SESSION['rol'], ['taquiller', 'admin'], true)): ?>
-                    <a class="btn btn-sm btn-outline-light me-2" href="treballador/index.php">Zona Treballador</a>
-                <?php endif; ?>
-                <a class="btn btn-sm btn-outline-light" href="logout.php">Tancar sessió</a>
-            <?php else: ?>
-                <a class="btn btn-sm btn-outline-light" href="login.php">Iniciar sessió</a>
-            <?php endif; ?>
-        </div>
-    </div>
-</nav>
+<?php require __DIR__ . '/partials/navbar.php'; ?>
 
-<div class="container">
+<div class="container flex-grow-1">
     <h1 class="mb-4">Cartellera</h1>
     <?php if (empty($dies)): ?>
         <p>No hi ha sessions properes.</p>

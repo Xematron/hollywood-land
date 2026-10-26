@@ -28,29 +28,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <title>Iniciar sessió — Hollywood Land</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<?php $pageTitle = 'Iniciar sessió — Hollywood Land'; require __DIR__ . '/partials/head.php'; ?>
 </head>
 <body>
-    <h1>Iniciar sessió</h1>
+<?php require __DIR__ . '/partials/navbar.php'; ?>
+
+<div class="container flex-grow-1" style="max-width: 420px;">
+    <h1 class="mb-4">Iniciar sessió</h1>
 
     <?php if ($error !== null): ?>
-        <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
     <form method="post" action="login.php">
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" required>
-
-        <label for="password">Contrasenya</label>
-        <input type="password" id="password" name="password" required>
-
-        <button type="submit">Entrar</button>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Contrasenya</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-dark">Entrar</button>
     </form>
 
-    <p><a href="registre.php">Crear compte nou</a></p>
+    <p class="mt-3"><a href="registre.php">Crear compte nou</a></p>
+</div>
 <?php require __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>

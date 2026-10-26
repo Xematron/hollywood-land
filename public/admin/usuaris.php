@@ -62,11 +62,13 @@ $usuaris = Usuari::all();
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestió d'usuaris — Hollywood Land</title>
+<?php $pageTitle = "Gestió d'usuaris — Hollywood Land"; require __DIR__ . '/../partials/head.php'; ?>
 </head>
 <body>
-    <h1>Gestió d'usuaris</h1>
+<?php require __DIR__ . '/../partials/navbar.php'; ?>
+
+<div class="container flex-grow-1">
+    <h1 class="mb-4">Gestió d'usuaris</h1>
     <p><a href="index.php">Tornar al panell admin</a></p>
 
     <?php if ($error !== null): ?>
@@ -112,5 +114,6 @@ $usuaris = Usuari::all();
 
         <button type="submit" name="accio" value="crear">Crear</button>
     </form>
+</div>
 </body>
 </html>

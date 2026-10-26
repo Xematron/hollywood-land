@@ -1,0 +1,101 @@
+:root {
+    --hl-chestnut: #2a1a1a;
+    --hl-chestnut-dark: #140b0b;
+    --hl-cream: #f5ecd7;
+    --hl-gold: #a3802f;
+    --hl-gold-light: #dec383;
+    --hl-ink: #2a1a1a;
+}
+
+body {
+    background-color: var(--hl-cream);
+    color: var(--hl-ink);
+    font-family: 'Lato', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4, h5 {
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 0.04em;
+}
+
+.navbar-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 40px;
+}
+
+a {
+    color: var(--hl-gold);
+}
+
+a:hover {
+    color: var(--hl-chestnut-dark);
+}
+
+.navbar {
+    background-color: var(--hl-chestnut) !important;
+}
+
+.navbar-links {
+    border-top: 1px solid rgba(245, 236, 215, 0.15);
+    background-color: var(--hl-gold) !important;
+    .links {
+        text-decoration: none;
+    }
+    .links:hover {
+        color: white;
+    }
+}
+
+footer.bg-dark {
+    background-color: var(--hl-chestnut) !important;
+}
+
+.btn {
+    padding-inline: 24px;
+    padding-block: 8px;
+}
+
+.btn-dark {
+    background-color: var(--hl-chestnut);
+    border-color: var(--hl-chestnut);
+}
+
+.btn-dark:hover {
+    background-color: var(--hl-gold);
+    border-color: var(--hl-gold);
+}
+
+.badge.text-bg-dark {
+    background-color: var(--hl-chestnut) !important;
+}
+
+.card {
+    border-color: var(--hl-gold);
+}
+
+.btn-outline-light {
+    border-color: var(--hl-gold-light);
+}
+
+.btn-outline-light:hover {
+    color: var(--hl-chestnut);
+}
+
+.text-chestnut {
+    color: var(--hl-chestnut);
+}
+
+.text-cream {
+    color: var(--hl-cream);
+}
+
+.text-gold {
+    color: var(--hl-gold);
+}
+
+.text-gold-light {
+    color: var(--hl-gold-light);
+}

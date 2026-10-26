@@ -67,11 +67,13 @@ for ($h = 0; $h < 24; $h++) {
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <title>Gestió de sessions — Hollywood Land</title>
+<?php $pageTitle = 'Gestió de sessions — Hollywood Land'; require __DIR__ . '/../partials/head.php'; ?>
 </head>
 <body>
-    <h1>Gestió de sessions</h1>
+<?php require __DIR__ . '/../partials/navbar.php'; ?>
+
+<div class="container flex-grow-1">
+    <h1 class="mb-4">Gestió de sessions</h1>
     <p><a href="index.php">Tornar al panell admin</a></p>
 
     <?php if ($error !== null): ?>
@@ -173,5 +175,6 @@ for ($h = 0; $h < 24; $h++) {
 
         <button type="submit" name="accio" value="crear">Crear</button>
     </form>
+</div>
 </body>
 </html>

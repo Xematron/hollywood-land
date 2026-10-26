@@ -40,11 +40,13 @@ ksort($files);
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <title>Butaques de <?= htmlspecialchars($sala['nom']) ?> — Hollywood Land</title>
+<?php $pageTitle = 'Butaques de ' . $sala['nom'] . ' — Hollywood Land'; require __DIR__ . '/../partials/head.php'; ?>
 </head>
 <body>
-    <h1>Butaques — <?= htmlspecialchars($sala['nom']) ?></h1>
+<?php require __DIR__ . '/../partials/navbar.php'; ?>
+
+<div class="container flex-grow-1">
+    <h1 class="mb-4">Butaques — <?= htmlspecialchars($sala['nom']) ?></h1>
     <p><a href="sales.php">Tornar a gestió de sales</a></p>
 
     <?php if ($success !== null): ?>
@@ -73,5 +75,6 @@ ksort($files);
 
         <button type="submit" name="accio" value="actualitzar">Desar</button>
     </form>
+</div>
 </body>
 </html>

@@ -31,35 +31,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-    <meta charset="UTF-8">
-    <title>Registre — Hollywood Land</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<?php $pageTitle = 'Registre — Hollywood Land'; require __DIR__ . '/partials/head.php'; ?>
 </head>
 <body>
-    <h1>Crear compte</h1>
+<?php require __DIR__ . '/partials/navbar.php'; ?>
+
+<div class="container flex-grow-1" style="max-width: 420px;">
+    <h1 class="mb-4">Crear compte</h1>
 
     <?php if ($error !== null): ?>
-        <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
 
     <form method="post" action="registre.php">
-        <label for="nom">Nom</label>
-        <input type="text" id="nom" name="nom" value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>" required>
-
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
-
-        <label for="password">Contrasenya</label>
-        <input type="password" id="password" name="password" required minlength="8">
-
-        <label for="password_confirm">Repeteix la contrasenya</label>
-        <input type="password" id="password_confirm" name="password_confirm" required minlength="8">
-
-        <button type="submit">Registrar-me</button>
+        <div class="mb-3">
+            <label for="nom" class="form-label">Nom</label>
+            <input type="text" id="nom" name="nom" class="form-control" value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>" required>
+        </div>
+        <div class="mb-3">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" name="email" class="form-control" value="<?= htmlspecialchars($_POST['email'] ?? '') ?>" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Contrasenya</label>
+            <input type="password" id="password" name="password" class="form-control" required minlength="8">
+        </div>
+        <div class="mb-3">
+            <label for="password_confirm" class="form-label">Repeteix la contrasenya</label>
+            <input type="password" id="password_confirm" name="password_confirm" class="form-control" required minlength="8">
+        </div>
+        <button type="submit" class="btn btn-dark">Registrar-me</button>
     </form>
 
-    <p><a href="login.php">Ja tinc compte</a></p>
+    <p class="mt-3"><a href="login.php">Ja tinc compte</a></p>
+</div>
 <?php require __DIR__ . '/partials/footer.php'; ?>
 </body>
 </html>

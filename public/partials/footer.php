@@ -2,25 +2,25 @@
     <div class="container">
         <div class="row gy-3">
             <div class="col-md-4">
-                <h5>Hollywood Land</h5>
-                <p class="small text-white-50 mb-0">Cinema de reposicions temàtiques en VOSE, amb cine-fòrums i cafeteria anys 50.</p>
+                <h5 class="text-gold-light">Hollywood Land</h5>
+                <p class="small text-cream mb-0">Cinema de reposicions temàtiques en VOSE, amb cine-fòrums i cafeteria anys 50.</p>
             </div>
             <div class="col-md-4">
-                <h6>Contacte</h6>
-                <p class="small text-white-50 mb-0">
+                <h6 class="text-gold-light">Contacte</h6>
+                <p class="small text-cream mb-0">
                     Carrer de l'Exemple, 1 — Barcelona<br>
                     info@hollywoodland.example<br>
                     +34 900 000 000
                 </p>
             </div>
             <div class="col-md-4">
-                <h6>Horari de taquilla</h6>
-                <p class="small text-white-50 mb-0">
+                <h6 class="text-gold-light">Horari de taquilla</h6>
+                <p class="small text-cream mb-0">
                     Dijous a diumenge, de 15:30h a 22:30h
                 </p>
             </div>
         </div>
         <hr class="border-secondary">
-        <p class="small text-white-50 mb-0 text-center">&copy; <?= date('Y') ?> Hollywood Land — Projecte acadèmic (TFG DAW M12)</p>
+        <p class="small text-cream mb-0 text-center">&copy; <?= date('Y') ?> Hollywood Land — Projecte acadèmic (TFG DAW M12)</p>
     </div>
 </footer>
