@@ -12,7 +12,7 @@ class Auth
     public static function requireLogin(): void
     {
         if (!self::isLoggedIn()) {
-            header('Location: /login.php');
+            header('Location: /login.php?redirect=' . urlencode($_SERVER['REQUEST_URI']));
             exit;
         }
     }

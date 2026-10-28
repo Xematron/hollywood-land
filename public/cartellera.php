@@ -28,6 +28,7 @@ $sessions = Sessio::cartellera();
                     <th>Sala</th>
                     <th>Preu</th>
                     <th>Subtítols</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -39,6 +40,7 @@ $sessions = Sessio::cartellera();
                     <td><?= htmlspecialchars($s['sala_nom']) ?></td>
                     <td><?= number_format((float) $s['preu'], 2) ?> €</td>
                     <td><?= htmlspecialchars($s['idioma_subtitols'] ?? '-') ?></td>
+                    <td><a class="btn btn-sm btn-dark" href="entrades.php?sessio_id=<?= (int) $s['id'] ?>">Comprar</a></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

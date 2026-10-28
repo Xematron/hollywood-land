@@ -18,7 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['nom'] = $usuari['nom'];
         $_SESSION['rol'] = $usuari['rol'];
 
-        header('Location: index.php');
+        $redirect = $_POST['redirect'] ?? '';
+        if ($redirect === '' || $redirect[0] !== '/' || str_starts_with($redirect, '//')) {
+            $redirect = '/index.php';
+        }
+
+        header('Location: ' . $redirect);
         exit;
     }
 
@@ -41,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post" action="login.php">
+        <input type="hidden" name="redirect" value="<?= htmlspecialchars($_GET['redirect'] ?? '') ?>">
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" id="email" name="email" class="form-control" required>

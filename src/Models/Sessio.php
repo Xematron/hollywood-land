@@ -49,6 +49,23 @@ class Sessio
         return $sessio ?: null;
     }
 
+    public static function findDetallById(int $id): ?array
+    {
+        $stmt = Database::getConnection()->prepare(
+            'SELECT s.id, s.sala_id, s.data, s.hora, s.preu, s.idioma_subtitols,
+                    p.titol, p.durada_min,
+                    sa.nom AS sala_nom
+             FROM Sessio s
+             JOIN Pelicula p ON p.id = s.pelicula_id
+             JOIN Sala sa ON sa.id = s.sala_id
+             WHERE s.id = :id'
+        );
+        $stmt->execute(['id' => $id]);
+        $sessio = $stmt->fetch();
+
+        return $sessio ?: null;
+    }
+
     public static function create(
         int $peliculaId,
         int $salaId,

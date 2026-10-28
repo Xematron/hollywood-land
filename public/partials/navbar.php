@@ -5,6 +5,9 @@
             <div>
                 <?php if (isset($_SESSION['user_id'])): ?>
                     <span class="text-light me-3">Hola <?= htmlspecialchars($_SESSION['nom']) ?></span>
+                    <?php if ($_SESSION['rol'] === 'client'): ?>
+                        <a class="btn btn-sm btn-outline-light text-gold-light me-2" href="/les-meves-entrades.php">Les meves entrades</a>
+                    <?php endif; ?>
                     <?php if ($_SESSION['rol'] === 'admin'): ?>
                         <a class="btn btn-sm btn-outline-light text-gold-light me-2" href="/admin/index.php">Zona Admin</a>
                     <?php endif; ?>
@@ -21,6 +24,7 @@
     <nav class="navbar navbar-dark navbar-links py-1 mb-4">
         <div class="container my-2">
             <a class="links text-chestnut" href="/cartellera.php">Cartellera</a>
+            <a class="links text-chestnut ms-3" href="/cartellera.php">Comprar entrades</a>
         </div>
     </nav>
 </header>
