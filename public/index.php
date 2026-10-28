@@ -71,6 +71,7 @@ foreach (Debat::propers() as $d) {
     $titol = 'Cine-fòrum: ' . ($d['titol'] ?? $d['pelicula_titol']);
     afegirAlDia($dies, $d['data'], [
         'tipus' => 'debat',
+        'id' => $d['id'],
         'hora' => sumaMinuts($d['hora_sessio'], (int) $d['pelicula_durada']),
         'titol' => $titol,
         'detall' => $d['durada_min'] . ' min' . ($d['aforament'] ? ' · aforament ' . $d['aforament'] : ''),
@@ -113,6 +114,7 @@ unset($dia);
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
                 <?php foreach ($dia['items'] as $item): ?>
                 <?php $esSessio = $item['tipus'] === 'sessio'; ?>
+                <?php $esDebat = $item['tipus'] === 'debat'; ?>
                 <div class="col">
                     <div class="card h-100 shadow-sm<?= $esSessio ? '' : ' border-warning' ?>">
                         <img src="https://placehold.co/300x450?text=<?= urlencode($item['poster']) ?>" class="card-img-top" alt="<?= htmlspecialchars($item['titol']) ?>">
@@ -124,6 +126,10 @@ unset($dia);
                         <?php if ($esSessio): ?>
                             <div class="card-footer bg-white border-0">
                                 <a href="cartellera.php" class="btn btn-sm btn-dark w-100">Veure sessions</a>
+                            </div>
+                        <?php elseif ($esDebat): ?>
+                            <div class="card-footer bg-white border-0">
+                                <a href="debat.php?id=<?= (int) $item['id'] ?>" class="btn btn-sm btn-dark w-100">Veure debat</a>
                             </div>
                         <?php endif; ?>
                     </div>

@@ -89,6 +89,7 @@ CREATE TABLE Activitat (
     data DATE NOT NULL,
     hora TIME NOT NULL,
     durada_min INT NOT NULL,
+    aforament INT NULL,
     sala_id INT NULL,
     FOREIGN KEY (sala_id) REFERENCES Sala(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -99,5 +100,14 @@ CREATE TABLE InscripcioDebat (
     usuari_id INT NOT NULL,
     UNIQUE (debat_id, usuari_id),
     FOREIGN KEY (debat_id) REFERENCES Debat(id),
+    FOREIGN KEY (usuari_id) REFERENCES Usuari(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE InscripcioActivitat (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    activitat_id INT NOT NULL,
+    usuari_id INT NOT NULL,
+    UNIQUE (activitat_id, usuari_id),
+    FOREIGN KEY (activitat_id) REFERENCES Activitat(id),
     FOREIGN KEY (usuari_id) REFERENCES Usuari(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

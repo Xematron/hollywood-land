@@ -24,3 +24,4 @@
         <p class="small text-cream mb-0 text-center">&copy; <?= date('Y') ?> Hollywood Land — Projecte acadèmic (TFG DAW M12)</p>
     </div>
 </footer>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

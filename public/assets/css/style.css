@@ -152,3 +152,32 @@ footer.bg-dark {
     margin-right: 4px;
     vertical-align: middle;
 }
+
+.table > tbody > tr.row-debat > td {
+    background-color: rgba(163, 128, 47, 0.18) !important;
+}
+
+.table > tbody > tr.row-activitat > td {
+    background-color: rgba(42, 26, 26, 0.08) !important;
+}
+
+.legend-sample {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border-radius: 3px;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+
+.legend-sessio {
+    background-color: var(--hl-chestnut);
+}
+
+.legend-debat {
+    background-color: var(--hl-gold);
+}
+
+.legend-activitat {
+    background-color: #9e9e9e;
+}
