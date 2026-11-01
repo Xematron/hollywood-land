@@ -12,10 +12,12 @@ class Database
     public static function getConnection(): PDO
     {
         if (self::$instance === null) {
-            $host = getenv('DB_HOST');
-            $db = getenv('DB_NAME');
-            $user = getenv('DB_USER');
-            $password = getenv('DB_PASSWORD');
+            // putenv() està deshabilitat en hosting compartit (InfinityFree);
+            // env.local.php hi defineix constants HL_DB_* en lloc de cridar putenv().
+            $host = defined('HL_DB_HOST') ? HL_DB_HOST : getenv('DB_HOST');
+            $db = defined('HL_DB_NAME') ? HL_DB_NAME : getenv('DB_NAME');
+            $user = defined('HL_DB_USER') ? HL_DB_USER : getenv('DB_USER');
+            $password = defined('HL_DB_PASSWORD') ? HL_DB_PASSWORD : getenv('DB_PASSWORD');
 
             try {
                 self::$instance = new PDO(

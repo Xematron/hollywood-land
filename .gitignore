@@ -1,3 +1,5 @@
 presentacio.md
 .~lock.*#
 .env
+src/Config/env.local.php
+backups/

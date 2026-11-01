@@ -1,0 +1,13 @@
+# Puja aquest fitxer com a htdocs/.htaccess a InfinityFree.
+# InfinityFree no permet canviar el DocumentRoot (sempre és htdocs/),
+# per això es reescriuen totes les peticions cap a public/, mantenint
+# intactes els paths absoluts ("/login.php", "/assets/css/style.css"...)
+# que el codi ja fa servir arreu (igual que en local, on el DocumentRoot
+# de Docker apunta directament a public/).
+
+DirectoryIndex index.php
+
+RewriteEngine On
+RewriteRule ^$ public/index.php [L]
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ public/$1 [L]

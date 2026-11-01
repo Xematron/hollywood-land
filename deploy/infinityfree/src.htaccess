@@ -1,0 +1,13 @@
+# Puja aquest fitxer com a htdocs/src/.htaccess a InfinityFree.
+# src/ queda dins el DocumentRoot (htdocs), a diferència del local on
+# viu fora de l'abast web (sibling de public/). Aquest fitxer bloqueja
+# l'accés HTTP directe (defensa en profunditat; el rewrite de dalt ja
+# no hi redirigeix mai cap petició).
+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
