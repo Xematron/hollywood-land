@@ -31,6 +31,43 @@ class Entrada
         ]);
     }
 
+    public static function taquilleraPerPeriode(string $dataInici, string $dataFi): array
+    {
+        $stmt = Database::getConnection()->prepare(
+            "SELECT p.id, p.titol,
+                    COUNT(e.id) AS entrades_venudes,
+                    SUM(e.preu_pagat) AS ingressos
+             FROM Entrada e
+             JOIN Sessio s ON s.id = e.sessio_id
+             JOIN Pelicula p ON p.id = s.pelicula_id
+             WHERE e.estat = 'pagada' AND s.data BETWEEN :inici AND :fi
+             GROUP BY p.id, p.titol
+             ORDER BY ingressos DESC"
+        );
+        $stmt->execute(['inici' => $dataInici, 'fi' => $dataFi]);
+
+        return $stmt->fetchAll();
+    }
+
+    public static function ocupacioPerSessio(string $dataInici, string $dataFi): array
+    {
+        $stmt = Database::getConnection()->prepare(
+            "SELECT s.id, s.data, s.hora, p.titol, sa.nom AS sala_nom,
+                    (SELECT COUNT(*) FROM Entrada e2
+                       WHERE e2.sessio_id = s.id AND e2.estat = 'pagada') AS venudes,
+                    (SELECT COUNT(*) FROM Butaca b
+                       WHERE b.sala_id = s.sala_id AND b.operativa = 1) AS capacitat
+             FROM Sessio s
+             JOIN Pelicula p ON p.id = s.pelicula_id
+             JOIN Sala sa ON sa.id = s.sala_id
+             WHERE s.data BETWEEN :inici AND :fi
+             ORDER BY s.data, s.hora"
+        );
+        $stmt->execute(['inici' => $dataInici, 'fi' => $dataFi]);
+
+        return $stmt->fetchAll();
+    }
+
     public static function findByUsuari(int $usuariId): array
     {
         $stmt = Database::getConnection()->prepare(

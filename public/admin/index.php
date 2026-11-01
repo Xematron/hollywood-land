@@ -23,6 +23,7 @@ $usuari = Auth::user();
     <p><a href="sales.php">Gestió de sales</a></p>
     <p><a href="pelicules.php">Gestió de pel·lícules</a></p>
     <p><a href="sessions.php">Gestió de sessions</a></p>
+    <p><a href="informes.php">Informes i estadístiques</a></p>
     <p><a href="../index.php">Tornar a l'inici</a></p>
 </div>
 </body>
