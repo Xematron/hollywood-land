@@ -12,6 +12,36 @@ Auth::requireLogin();
 $entrades = Entrada::findByUsuari((int) Auth::user()['id']);
 $inscripcions = InscripcioDebat::findByUsuari((int) Auth::user()['id']);
 $inscripcionsActivitats = InscripcioActivitat::findByUsuari((int) Auth::user()['id']);
+
+$activitats = [];
+
+foreach ($inscripcions as $i) {
+    $horaInici = DateTime::createFromFormat('H:i:s', $i['hora_sessio']);
+    $horaInici->modify('+' . (int) $i['pelicula_durada'] . ' minutes');
+    $activitats[] = [
+        'tipus' => 'Cine-fòrum',
+        'titol' => $i['titol'] ?? $i['pelicula_titol'],
+        'data' => $i['data'],
+        'hora' => $horaInici->format('H:i'),
+        'durada' => (int) $i['durada_min'],
+        'es_debat' => true,
+        'debat_id' => (int) $i['debat_id'],
+    ];
+}
+
+foreach ($inscripcionsActivitats as $a) {
+    $activitats[] = [
+        'tipus' => ucfirst($a['tipus']),
+        'titol' => $a['titol'],
+        'data' => $a['data'],
+        'hora' => substr($a['hora'], 0, 5),
+        'durada' => (int) $a['durada_min'],
+        'es_debat' => false,
+        'activitat_id' => (int) $a['activitat_id'],
+    ];
+}
+
+usort($activitats, fn ($a, $b) => $a['data'] . $a['hora'] <=> $b['data'] . $b['hora']);
 ?>
 <!DOCTYPE html>
 <html lang="ca">
@@ -23,6 +53,8 @@ $inscripcionsActivitats = InscripcioActivitat::findByUsuari((int) Auth::user()['
 
 <div class="container flex-grow-1">
     <h1 class="mb-4">Les meves entrades</h1>
+
+    <h2 class="mb-3">Pel·lícules</h2>
 
     <?php if (empty($entrades)): ?>
         <p>Encara no has comprat cap entrada. <a href="cartellera.php">Consulta la cartellera</a>.</p>
@@ -61,43 +93,10 @@ $inscripcionsActivitats = InscripcioActivitat::findByUsuari((int) Auth::user()['
         </table>
     <?php endif; ?>
 
-    <h1 class="mt-5 mb-4">Els meus cine-fòrums</h1>
+    <h2 class="mt-5 mb-3">Activitats</h2>
 
-    <?php if (empty($inscripcions)): ?>
-        <p>Encara no t'has inscrit a cap cine-fòrum.</p>
-    <?php else: ?>
-        <table class="table table-striped align-middle">
-            <thead>
-                <tr>
-                    <th>Cine-fòrum</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Durada</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($inscripcions as $i): ?>
-                <?php
-                $horaInici = DateTime::createFromFormat('H:i:s', $i['hora_sessio']);
-                $horaInici->modify('+' . (int) $i['pelicula_durada'] . ' minutes');
-                ?>
-                <tr>
-                    <td><?= htmlspecialchars($i['titol'] ?? $i['pelicula_titol']) ?></td>
-                    <td><?= htmlspecialchars($i['data']) ?></td>
-                    <td><?= $horaInici->format('H:i') ?></td>
-                    <td><?= (int) $i['durada_min'] ?> min</td>
-                    <td><a href="debat.php?id=<?= (int) $i['debat_id'] ?>" class="btn btn-sm btn-outline-dark">Gestionar</a></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-    <?php endif; ?>
-
-    <h1 class="mt-5 mb-4">Les meves activitats</h1>
-
-    <?php if (empty($inscripcionsActivitats)): ?>
-        <p>Encara no t'has inscrit a cap activitat.</p>
+    <?php if (empty($activitats)): ?>
+        <p>Encara no t'has inscrit a cap cine-fòrum ni activitat.</p>
     <?php else: ?>
         <table class="table table-striped align-middle">
             <thead>
@@ -111,18 +110,23 @@ $inscripcionsActivitats = InscripcioActivitat::findByUsuari((int) Auth::user()['
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($inscripcionsActivitats as $a): ?>
+                <?php foreach ($activitats as $a): ?>
                 <tr>
-                    <td><?= htmlspecialchars(ucfirst($a['tipus'])) ?></td>
+                    <td><?= htmlspecialchars($a['tipus']) ?></td>
                     <td><?= htmlspecialchars($a['titol']) ?></td>
                     <td><?= htmlspecialchars($a['data']) ?></td>
-                    <td><?= substr($a['hora'], 0, 5) ?></td>
-                    <td><?= (int) $a['durada_min'] ?> min</td>
+                    <td><?= htmlspecialchars($a['hora']) ?></td>
+                    <td><?= $a['durada'] ?> min</td>
                     <td>
-                        <form method="post" action="cartellera.php" class="d-inline js-confirm" data-message="Vols cancel·lar la inscripció?">
-                            <input type="hidden" name="activitat_id" value="<?= (int) $a['activitat_id'] ?>">
-                            <button type="submit" name="accio" value="cancelar" class="btn btn-sm btn-outline-dark">Cancel·la</button>
-                        </form>
+                        <?php if ($a['es_debat']): ?>
+                            <a href="debat.php?id=<?= $a['debat_id'] ?>" class="btn btn-sm btn-outline-dark">Gestionar</a>
+                        <?php else: ?>
+                            <form method="post" action="cartellera.php" class="d-inline js-confirm" data-message="Vols cancel·lar la inscripció?">
+                                <input type="hidden" name="activitat_id" value="<?= $a['activitat_id'] ?>">
+                                <input type="hidden" name="accio" value="cancelar">
+                                <button type="submit" class="btn btn-sm btn-outline-dark">Cancel·la</button>
+                            </form>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>

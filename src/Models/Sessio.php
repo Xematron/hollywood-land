@@ -9,14 +9,17 @@ class Sessio
 {
     public static function cartellera(): array
     {
+        // Data fixa, no CURDATE(): projecte fictici amb dades de demo que
+        // no creixen, cal que la cartellera surti plena independentment
+        // de quan es faci la presentació/entrevista.
         $stmt = Database::getConnection()->query(
             'SELECT s.id, s.data, s.hora, s.preu, s.idioma_subtitols,
-                    p.id AS pelicula_id, p.titol, p.durada_min, p.classificacio,
+                    p.id AS pelicula_id, p.titol, p.durada_min, p.classificacio, p.sinopsi,
                     sa.nom AS sala_nom
              FROM Sessio s
              JOIN Pelicula p ON p.id = s.pelicula_id
              JOIN Sala sa ON sa.id = s.sala_id
-             WHERE s.data >= CURDATE()
+             WHERE s.data >= "2026-11-01"
              ORDER BY s.data, s.hora'
         );
 

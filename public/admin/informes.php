@@ -40,7 +40,7 @@ if ($dataInici > $dataFi) {
 
 <div class="container flex-grow-1">
     <h1 class="mb-4">Informes i estadístiques</h1>
-    <p><a href="index.php">Tornar al panell admin</a></p>
+    <a href="index.php" class="btn btn-outline-dark btn-sm mb-3">Tornar al panell admin</a>
 
     <?php if ($error !== null): ?>
         <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
@@ -117,5 +117,6 @@ if ($dataInici > $dataFi) {
         </table>
     <?php endif; ?>
 </div>
+<?php require __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

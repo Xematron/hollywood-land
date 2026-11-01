@@ -2,9 +2,42 @@
 
 require __DIR__ . '/../src/bootstrap.php';
 
+use HollywoodLand\Core\Auth;
 use HollywoodLand\Models\Activitat;
 use HollywoodLand\Models\Debat;
+use HollywoodLand\Models\InscripcioActivitat;
 use HollywoodLand\Models\Sessio;
+
+$missatgesActivitat = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activitat_id'])) {
+    Auth::requireLogin();
+
+    $activitatId = (int) $_POST['activitat_id'];
+    $accio = $_POST['accio'] ?? '';
+    $usuariId = (int) Auth::user()['id'];
+
+    if ($accio === 'inscriure') {
+        $activitatInfo = Activitat::findById($activitatId);
+        $inscrits = InscripcioActivitat::comptar($activitatId);
+
+        if ($activitatInfo !== null && $activitatInfo['aforament'] !== null && $inscrits >= (int) $activitatInfo['aforament']) {
+            $missatgesActivitat[$activitatId] = ['tipus' => 'danger', 'text' => 'Aforament complet.'];
+        } else {
+            try {
+                InscripcioActivitat::inscriure($activitatId, $usuariId);
+                $missatgesActivitat[$activitatId] = ['tipus' => 'success', 'text' => 'Inscrit correctament.'];
+            } catch (PDOException $e) {
+                $missatgesActivitat[$activitatId] = ['tipus' => 'warning', 'text' => 'Ja hi estaves inscrit.'];
+            }
+        }
+    } elseif ($accio === 'cancelar') {
+        InscripcioActivitat::cancelar($activitatId, $usuariId);
+        $missatgesActivitat[$activitatId] = ['tipus' => 'success', 'text' => 'Inscripció cancel·lada.'];
+    }
+}
+
+$usuari = Auth::user();
 
 const MESOS_CA = [
     1 => 'gener', 2 => 'febrer', 3 => 'març', 4 => 'abril',
@@ -60,9 +93,12 @@ $dies = [];
 foreach (Sessio::cartellera() as $s) {
     afegirAlDia($dies, $s['data'], [
         'tipus' => 'sessio',
+        'sessio_id' => $s['id'],
         'hora' => substr($s['hora'], 0, 5),
         'titol' => $s['titol'],
         'detall' => (int) $s['durada_min'] . ' min' . ($s['classificacio'] ? ' · ' . $s['classificacio'] : ''),
+        'sala' => $s['sala_nom'],
+        'sinopsi' => $s['sinopsi'],
         'poster' => $s['titol'],
     ]);
 }
@@ -81,12 +117,16 @@ foreach (Debat::propers() as $d) {
 
 foreach (Activitat::properes() as $a) {
     $titol = ucfirst($a['tipus']) . ': ' . $a['titol'];
+    $activitatId = (int) $a['id'];
     afegirAlDia($dies, $a['data'], [
         'tipus' => 'activitat',
+        'activitat_id' => $activitatId,
         'hora' => substr($a['hora'], 0, 5),
         'titol' => $titol,
         'detall' => $a['durada_min'] . ' min',
         'poster' => $titol,
+        'aforament' => $a['aforament'],
+        'inscrits' => InscripcioActivitat::comptar($activitatId),
     ]);
 }
 
@@ -115,6 +155,7 @@ unset($dia);
                 <?php foreach ($dia['items'] as $item): ?>
                 <?php $esSessio = $item['tipus'] === 'sessio'; ?>
                 <?php $esDebat = $item['tipus'] === 'debat'; ?>
+                <?php $esActivitat = $item['tipus'] === 'activitat'; ?>
                 <div class="col">
                     <div class="card h-100 shadow-sm<?= $esSessio ? '' : ' border-warning' ?>">
                         <img src="https://placehold.co/300x450?text=<?= urlencode($item['poster']) ?>" class="card-img-top" alt="<?= htmlspecialchars($item['titol']) ?>">
@@ -122,14 +163,51 @@ unset($dia);
                             <span class="badge <?= $esSessio ? 'text-bg-dark' : 'text-bg-warning text-dark' ?> mb-2"><?= htmlspecialchars($item['hora']) ?>h</span>
                             <h5 class="card-title"><?= htmlspecialchars($item['titol']) ?></h5>
                             <p class="card-text text-muted mb-0"><?= htmlspecialchars($item['detall']) ?></p>
+                            <?php if ($esSessio): ?>
+                                <p class="card-text text-muted mb-0"><?= htmlspecialchars($item['sala']) ?></p>
+                                <?php if ($item['sinopsi']): ?>
+                                    <p class="card-text small mt-2"><?= htmlspecialchars($item['sinopsi']) ?></p>
+                                <?php endif; ?>
+                            <?php endif; ?>
                         </div>
                         <?php if ($esSessio): ?>
                             <div class="card-footer bg-white border-0">
-                                <a href="cartellera.php" class="btn btn-sm btn-dark w-100">Veure sessions</a>
+                                <a href="entrades.php?sessio_id=<?= (int) $item['sessio_id'] ?>" class="btn btn-sm btn-dark w-100">Comprar entrades</a>
                             </div>
                         <?php elseif ($esDebat): ?>
                             <div class="card-footer bg-white border-0">
                                 <a href="debat.php?id=<?= (int) $item['id'] ?>" class="btn btn-sm btn-dark w-100">Veure debat</a>
+                            </div>
+                        <?php elseif ($esActivitat): ?>
+                            <?php
+                                $activitatId = $item['activitat_id'];
+                                $jaInscritActivitat = $usuari !== null && InscripcioActivitat::jaInscrit($activitatId, (int) $usuari['id']);
+                                $pleActivitat = $item['aforament'] !== null && $item['inscrits'] >= (int) $item['aforament'] && !$jaInscritActivitat;
+                            ?>
+                            <div class="card-footer bg-white border-0">
+                                <?php if (isset($missatgesActivitat[$activitatId])): ?>
+                                    <div class="small text-<?= $missatgesActivitat[$activitatId]['tipus'] === 'success' ? 'success' : ($missatgesActivitat[$activitatId]['tipus'] === 'warning' ? 'warning' : 'danger') ?> mb-1">
+                                        <?= htmlspecialchars($missatgesActivitat[$activitatId]['text']) ?>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if ($usuari === null): ?>
+                                    <a href="login.php?redirect=<?= urlencode('/index.php') ?>" class="btn btn-sm btn-dark w-100">Inicia sessió</a>
+                                <?php elseif ($jaInscritActivitat): ?>
+                                    <form method="post" class="js-confirm" data-message="Vols cancel·lar la inscripció?">
+                                        <input type="hidden" name="activitat_id" value="<?= $activitatId ?>">
+                                        <input type="hidden" name="accio" value="cancelar">
+                                        <button type="submit" class="btn btn-sm btn-outline-dark w-100">Cancel·la inscripció</button>
+                                    </form>
+                                <?php elseif ($pleActivitat): ?>
+                                    <span class="badge text-bg-secondary">Aforament complet</span>
+                                <?php else: ?>
+                                    <form method="post" class="js-confirm" data-message="Vols inscriure't a aquesta activitat?">
+                                        <input type="hidden" name="activitat_id" value="<?= $activitatId ?>">
+                                        <input type="hidden" name="accio" value="inscriure">
+                                        <button type="submit" class="btn btn-sm btn-dark w-100">Inscriu-t'hi</button>
+                                    </form>
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -140,5 +218,6 @@ unset($dia);
     <?php endif; ?>
 </div>
 <?php require __DIR__ . '/partials/footer.php'; ?>
+<?php require __DIR__ . '/partials/confirm_modal.php'; ?>
 </body>
 </html>

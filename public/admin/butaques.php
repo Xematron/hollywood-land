@@ -6,7 +6,7 @@ use HollywoodLand\Core\Auth;
 use HollywoodLand\Models\Butaca;
 use HollywoodLand\Models\Sala;
 
-Auth::requireRole('admin');
+Auth::requireRole('treballador', 'admin');
 
 $salaId = (int) ($_GET['sala_id'] ?? 0);
 $sala = Sala::findById($salaId);
@@ -47,10 +47,10 @@ ksort($files);
 
 <div class="container flex-grow-1">
     <h1 class="mb-4">Butaques — <?= htmlspecialchars($sala['nom']) ?></h1>
-    <p><a href="sales.php">Tornar a gestió de sales</a></p>
+    <a href="sales.php" class="btn btn-outline-dark btn-sm mb-3">Tornar a gestió de sales</a>
 
     <?php if ($success !== null): ?>
-        <p style="color:green;"><?= htmlspecialchars($success) ?></p>
+        <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
     <?php endif; ?>
 
     <p>Desmarca les butaques temporalment fora de servei (obres, desperfectes...). No afecta les entrades ja venudes.</p>
@@ -60,21 +60,23 @@ ksort($files);
             <p>
                 <strong>Fila <?= htmlspecialchars($fila) ?>:</strong>
                 <?php foreach ($butaquesFila as $butaca): ?>
-                    <label style="margin-right:0.75rem;">
+                    <label class="form-check form-check-inline">
                         <input
                             type="checkbox"
                             name="operativa[]"
                             value="<?= (int) $butaca['id'] ?>"
+                            class="form-check-input"
                             <?= $butaca['operativa'] ? 'checked' : '' ?>
                         >
-                        <?= (int) $butaca['numero'] ?>
+                        <span class="form-check-label"><?= (int) $butaca['numero'] ?></span>
                     </label>
                 <?php endforeach; ?>
             </p>
         <?php endforeach; ?>
 
-        <button type="submit" name="accio" value="actualitzar">Desar</button>
+        <button type="submit" name="accio" value="actualitzar" class="btn btn-dark">Desar</button>
     </form>
 </div>
+<?php require __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

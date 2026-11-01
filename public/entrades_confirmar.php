@@ -22,13 +22,6 @@ if ($sessio === null) {
     exit('Sessió no trobada.');
 }
 
-$sessioInici = DateTime::createFromFormat('Y-m-d H:i:s', $sessio['data'] . ' ' . $sessio['hora']);
-
-if ($sessioInici < new DateTime()) {
-    http_response_code(400);
-    exit('Aquesta sessió ja ha passat, no es poden comprar entrades.');
-}
-
 $butacaIdsSeleccionades = array_map('intval', $_POST['butaca_id'] ?? []);
 $usuariId = (int) Auth::user()['id'];
 

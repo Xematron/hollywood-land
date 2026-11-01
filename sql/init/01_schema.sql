@@ -5,7 +5,7 @@ CREATE TABLE Usuari (
     nom VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     password_hash VARCHAR(255) NOT NULL,
-    rol ENUM('admin', 'taquiller', 'client') NOT NULL DEFAULT 'client',
+    rol ENUM('admin', 'treballador', 'client') NOT NULL DEFAULT 'client',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

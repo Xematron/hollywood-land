@@ -16,7 +16,7 @@ class Debat
              JOIN Sessio s ON s.id = d.sessio_id
              JOIN Pelicula p ON p.id = s.pelicula_id
              JOIN Sala sa ON sa.id = s.sala_id
-             WHERE s.data >= CURDATE()
+             WHERE s.data >= "2026-11-01"
              ORDER BY s.data, s.hora'
         );
 

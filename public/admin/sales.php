@@ -5,7 +5,9 @@ require __DIR__ . '/../../src/bootstrap.php';
 use HollywoodLand\Core\Auth;
 use HollywoodLand\Models\Sala;
 
-Auth::requireRole('admin');
+Auth::requireRole('treballador', 'admin');
+
+$urlPanell = Auth::user()['rol'] === 'admin' ? 'index.php' : '../treballador/index.php';
 
 $error = null;
 $success = null;
@@ -38,30 +40,31 @@ $sales = Sala::all();
 
 <div class="container flex-grow-1">
     <h1 class="mb-4">Gestió de sales</h1>
-    <p><a href="index.php">Tornar al panell admin</a></p>
+    <a href="<?= $urlPanell ?>" class="btn btn-outline-dark btn-sm mb-3">Tornar al panell</a>
 
     <?php if ($error !== null): ?>
-        <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
     <?php if ($success !== null): ?>
-        <p style="color:green;"><?= htmlspecialchars($success) ?></p>
+        <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
     <?php endif; ?>
 
-    <h2>Sales</h2>
+    <h2 class="mt-4">Sales</h2>
     <?php foreach ($sales as $sala): ?>
-        <form method="post" style="display:flex; gap:0.5rem; align-items:center; margin-bottom:0.5rem;">
+        <form method="post" class="d-flex flex-wrap gap-2 align-items-center mb-2 pb-2 border-bottom">
             <input type="hidden" name="id" value="<?= (int) $sala['id'] ?>">
-            <input type="text" name="nom" value="<?= htmlspecialchars($sala['nom']) ?>" required>
+            <input type="text" name="nom" value="<?= htmlspecialchars($sala['nom']) ?>" class="form-control form-control-sm w-auto" required>
             <span>
                 Capacitat: <?= (int) $sala['capacitat'] ?>
                 <?php if ((int) $sala['fora_servei'] > 0): ?>
                     (<?= (int) $sala['fora_servei'] ?> fora de servei)
                 <?php endif; ?>
             </span>
-            <button type="submit" name="accio" value="actualitzar">Desar</button>
-            <a href="butaques.php?sala_id=<?= (int) $sala['id'] ?>">Gestionar butaques</a>
+            <button type="submit" name="accio" value="actualitzar" class="btn btn-sm btn-dark">Desar</button>
+            <a href="butaques.php?sala_id=<?= (int) $sala['id'] ?>" class="btn btn-sm btn-outline-dark">Gestionar butaques</a>
         </form>
     <?php endforeach; ?>
 </div>
+<?php require __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

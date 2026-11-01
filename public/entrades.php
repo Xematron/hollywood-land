@@ -17,9 +17,6 @@ if ($sessio === null) {
     exit('Sessió no trobada.');
 }
 
-$sessioInici = DateTime::createFromFormat('Y-m-d H:i:s', $sessio['data'] . ' ' . $sessio['hora']);
-$haPassat = $sessioInici < new DateTime();
-
 $butaques = Butaca::perSala($sessio['sala_id']);
 $ocupades = Entrada::ocupades($sessioId);
 
@@ -45,9 +42,6 @@ ksort($files);
         · <?= number_format((float) $sessio['preu'], 2) ?> €/entrada
     </p>
 
-    <?php if ($haPassat): ?>
-        <div class="alert alert-warning">Aquesta sessió ja ha passat, no es poden comprar entrades.</div>
-    <?php else: ?>
         <div class="mb-3 d-flex gap-3">
             <span><span class="seat-sample seat-lliure"></span> Lliure</span>
             <span><span class="seat-sample seat-ocupada"></span> Ocupada</span>
@@ -117,7 +111,6 @@ ksort($files);
             });
         })();
         </script>
-    <?php endif; ?>
 </div>
 <?php require __DIR__ . '/partials/footer.php'; ?>
 </body>

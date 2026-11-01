@@ -5,7 +5,9 @@ require __DIR__ . '/../../src/bootstrap.php';
 use HollywoodLand\Core\Auth;
 use HollywoodLand\Models\Pelicula;
 
-Auth::requireRole('admin');
+Auth::requireRole('treballador', 'admin');
+
+$urlPanell = Auth::user()['rol'] === 'admin' ? 'index.php' : '../treballador/index.php';
 
 $error = null;
 $success = null;
@@ -59,66 +61,79 @@ $pelicules = Pelicula::all();
 
 <div class="container flex-grow-1">
     <h1 class="mb-4">Gestió de pel·lícules</h1>
-    <p><a href="index.php">Tornar al panell admin</a></p>
+    <a href="<?= $urlPanell ?>" class="btn btn-outline-dark btn-sm mb-3">Tornar al panell</a>
 
     <?php if ($error !== null): ?>
-        <p style="color:red;"><?= htmlspecialchars($error) ?></p>
+        <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
     <?php endif; ?>
     <?php if ($success !== null): ?>
-        <p style="color:green;"><?= htmlspecialchars($success) ?></p>
+        <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
     <?php endif; ?>
 
-    <h2>Pel·lícules existents</h2>
+    <h2 class="mt-4">Pel·lícules existents</h2>
     <?php foreach ($pelicules as $pelicula): ?>
-        <form method="post" style="display:flex; flex-wrap:wrap; gap:0.5rem; align-items:center; margin-bottom:0.75rem; border-bottom:1px solid #ccc; padding-bottom:0.5rem;">
+        <form method="post" class="d-flex flex-wrap gap-2 align-items-end mb-3 pb-3 border-bottom">
             <input type="hidden" name="id" value="<?= (int) $pelicula['id'] ?>">
 
-            <label>Títol
-                <input type="text" name="titol" value="<?= htmlspecialchars($pelicula['titol']) ?>" required>
-            </label>
-            <label>Durada (min)
-                <input type="number" name="durada_min" value="<?= (int) $pelicula['durada_min'] ?>" min="1" required>
-            </label>
-            <label>Idioma original
-                <input type="text" name="idioma_original" value="<?= htmlspecialchars($pelicula['idioma_original']) ?>" required>
-            </label>
-            <label>Classificació
-                <input type="text" name="classificacio" value="<?= htmlspecialchars($pelicula['classificacio'] ?? '') ?>">
-            </label>
-            <label>Cartell (URL)
-                <input type="text" name="cartell_img" value="<?= htmlspecialchars($pelicula['cartell_img'] ?? '') ?>">
-            </label>
-            <label>Sinopsi
-                <textarea name="sinopsi" rows="2" cols="30"><?= htmlspecialchars($pelicula['sinopsi'] ?? '') ?></textarea>
-            </label>
+            <div>
+                <label class="form-label small mb-0">Títol</label>
+                <input type="text" name="titol" value="<?= htmlspecialchars($pelicula['titol']) ?>" class="form-control form-control-sm" required>
+            </div>
+            <div>
+                <label class="form-label small mb-0">Durada (min)</label>
+                <input type="number" name="durada_min" value="<?= (int) $pelicula['durada_min'] ?>" min="1" class="form-control form-control-sm" style="width: 6rem;" required>
+            </div>
+            <div>
+                <label class="form-label small mb-0">Idioma original</label>
+                <input type="text" name="idioma_original" value="<?= htmlspecialchars($pelicula['idioma_original']) ?>" class="form-control form-control-sm" required>
+            </div>
+            <div>
+                <label class="form-label small mb-0">Classificació</label>
+                <input type="text" name="classificacio" value="<?= htmlspecialchars($pelicula['classificacio'] ?? '') ?>" class="form-control form-control-sm" style="width: 6rem;">
+            </div>
+            <div>
+                <label class="form-label small mb-0">Cartell (URL)</label>
+                <input type="text" name="cartell_img" value="<?= htmlspecialchars($pelicula['cartell_img'] ?? '') ?>" class="form-control form-control-sm">
+            </div>
+            <div>
+                <label class="form-label small mb-0">Sinopsi</label>
+                <textarea name="sinopsi" rows="1" class="form-control form-control-sm"><?= htmlspecialchars($pelicula['sinopsi'] ?? '') ?></textarea>
+            </div>
 
-            <button type="submit" name="accio" value="actualitzar">Desar</button>
-            <button type="submit" name="accio" value="eliminar" onclick="return confirm('Eliminar aquesta pel·lícula?');">Eliminar</button>
+            <button type="submit" name="accio" value="actualitzar" class="btn btn-sm btn-dark">Desar</button>
+            <button type="submit" name="accio" value="eliminar" class="btn btn-sm btn-outline-dark" onclick="return confirm('Eliminar aquesta pel·lícula?');">Eliminar</button>
         </form>
     <?php endforeach; ?>
 
-    <h2>Crear pel·lícula nova</h2>
-    <form method="post">
-        <label for="titol">Títol</label>
-        <input type="text" id="titol" name="titol" required>
-
-        <label for="durada_min">Durada (min)</label>
-        <input type="number" id="durada_min" name="durada_min" min="1" required>
-
-        <label for="idioma_original">Idioma original</label>
-        <input type="text" id="idioma_original" name="idioma_original" required>
-
-        <label for="classificacio">Classificació</label>
-        <input type="text" id="classificacio" name="classificacio">
-
-        <label for="cartell_img">Cartell (URL)</label>
-        <input type="text" id="cartell_img" name="cartell_img">
-
-        <label for="sinopsi">Sinopsi</label>
-        <textarea id="sinopsi" name="sinopsi" rows="3" cols="40"></textarea>
-
-        <button type="submit" name="accio" value="crear">Crear</button>
+    <h2 class="mt-5">Crear pel·lícula nova</h2>
+    <form method="post" style="max-width: 480px;">
+        <div class="mb-3">
+            <label for="titol" class="form-label">Títol</label>
+            <input type="text" id="titol" name="titol" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="durada_min" class="form-label">Durada (min)</label>
+            <input type="number" id="durada_min" name="durada_min" min="1" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="idioma_original" class="form-label">Idioma original</label>
+            <input type="text" id="idioma_original" name="idioma_original" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="classificacio" class="form-label">Classificació</label>
+            <input type="text" id="classificacio" name="classificacio" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="cartell_img" class="form-label">Cartell (URL)</label>
+            <input type="text" id="cartell_img" name="cartell_img" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label for="sinopsi" class="form-label">Sinopsi</label>
+            <textarea id="sinopsi" name="sinopsi" rows="3" class="form-control"></textarea>
+        </div>
+        <button type="submit" name="accio" value="crear" class="btn btn-dark">Crear</button>
     </form>
 </div>
+<?php require __DIR__ . '/../partials/footer.php'; ?>
 </body>
 </html>

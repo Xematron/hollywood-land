@@ -80,13 +80,15 @@ $haPassat = $debatDateTime < new DateTime();
         <div class="alert alert-warning">Aquest cine-fòrum ja ha passat.</div>
     <?php elseif ($jaInscrit): ?>
         <form method="post" class="js-confirm" data-message="Vols cancel·lar la inscripció?">
-            <button type="submit" name="accio" value="cancelar" class="btn btn-outline-dark">Cancel·la la inscripció</button>
+            <input type="hidden" name="accio" value="cancelar">
+            <button type="submit" class="btn btn-outline-dark">Cancel·la la inscripció</button>
         </form>
     <?php elseif ($ple): ?>
         <div class="alert alert-secondary">Aforament complet.</div>
     <?php else: ?>
         <form method="post" class="js-confirm" data-message="Vols inscriure't a aquest cine-fòrum?">
-            <button type="submit" name="accio" value="inscriure" class="btn btn-dark">Inscriu-m'hi</button>
+            <input type="hidden" name="accio" value="inscriure">
+            <button type="submit" class="btn btn-dark">Inscriu-m'hi</button>
         </form>
     <?php endif; ?>
 </div>

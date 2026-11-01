@@ -202,14 +202,16 @@ usort($items, fn ($a, $b) => $a['datahora'] <=> $b['datahora']);
                             <?php elseif ($jaInscrit): ?>
                                 <form method="post" class="d-inline js-confirm" data-message="Vols cancel·lar la inscripció?">
                                     <input type="hidden" name="debat_id" value="<?= $debatId ?>">
-                                    <button type="submit" name="accio" value="cancelar" class="btn btn-sm btn-outline-dark">Cancel·la</button>
+                                    <input type="hidden" name="accio" value="cancelar">
+                                    <button type="submit" class="btn btn-sm btn-outline-dark">Cancel·la</button>
                                 </form>
                             <?php elseif ($ple): ?>
                                 <span class="badge text-bg-secondary">Ple</span>
                             <?php else: ?>
                                 <form method="post" class="d-inline js-confirm" data-message="Vols inscriure't a aquest cine-fòrum?">
                                     <input type="hidden" name="debat_id" value="<?= $debatId ?>">
-                                    <button type="submit" name="accio" value="inscriure" class="btn btn-sm btn-dark">Inscriu-m'hi</button>
+                                    <input type="hidden" name="accio" value="inscriure">
+                                    <button type="submit" class="btn btn-sm btn-dark">Inscriu-m'hi</button>
                                 </form>
                             <?php endif; ?>
                         <?php elseif ($item['tipus'] === 'activitat'): ?>
@@ -228,14 +230,16 @@ usort($items, fn ($a, $b) => $a['datahora'] <=> $b['datahora']);
                             <?php elseif ($jaInscritActivitat): ?>
                                 <form method="post" class="d-inline js-confirm" data-message="Vols cancel·lar la inscripció?">
                                     <input type="hidden" name="activitat_id" value="<?= $activitatId ?>">
-                                    <button type="submit" name="accio" value="cancelar" class="btn btn-sm btn-outline-dark">Cancel·la</button>
+                                    <input type="hidden" name="accio" value="cancelar">
+                                    <button type="submit" class="btn btn-sm btn-outline-dark">Cancel·la</button>
                                 </form>
                             <?php elseif ($pleActivitat): ?>
                                 <span class="badge text-bg-secondary">Ple</span>
                             <?php else: ?>
                                 <form method="post" class="d-inline js-confirm" data-message="Vols inscriure't a aquesta activitat?">
                                     <input type="hidden" name="activitat_id" value="<?= $activitatId ?>">
-                                    <button type="submit" name="accio" value="inscriure" class="btn btn-sm btn-dark">Inscriu-m'hi</button>
+                                    <input type="hidden" name="accio" value="inscriure">
+                                    <button type="submit" class="btn btn-sm btn-dark">Inscriu-m'hi</button>
                                 </form>
                             <?php endif; ?>
                         <?php endif; ?>
