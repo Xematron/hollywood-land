@@ -42,10 +42,12 @@ ksort($files);
         · <?= number_format((float) $sessio['preu'], 2) ?> €/entrada
     </p>
 
-        <div class="mb-3 d-flex gap-3">
+        <div class="mb-3 d-flex gap-3 align-items-center flex-wrap">
             <span><span class="seat-sample seat-lliure"></span> Lliure</span>
             <span><span class="seat-sample seat-ocupada"></span> Ocupada</span>
             <span><span class="seat-sample seat-fora"></span> Fora de servei</span>
+            <button type="button" id="btn-actualitza-disponibilitat" class="btn btn-sm btn-outline-dark">Actualitzar disponibilitat</button>
+            <span id="disponibilitat-info" class="text-muted small"></span>
         </div>
 
         <form method="post" action="entrades_confirmar.php" id="form-entrades">
@@ -108,6 +110,21 @@ ksort($files);
 
             checkboxes.forEach(function (cb) {
                 cb.addEventListener('change', actualitza);
+            });
+
+            var btnDisponibilitat = document.getElementById('btn-actualitza-disponibilitat');
+            var infoEl = document.getElementById('disponibilitat-info');
+
+            btnDisponibilitat.addEventListener('click', function () {
+                infoEl.textContent = 'Consultant...';
+                fetch('api/sessio-ocupacio.php?sessio_id=<?= $sessio['id'] ?>')
+                    .then(function (resp) { return resp.json(); })
+                    .then(function (dades) {
+                        infoEl.textContent = dades.lliures + ' de ' + dades.capacitat + ' butaques lliures ara mateix.';
+                    })
+                    .catch(function () {
+                        infoEl.textContent = 'No s\'ha pogut consultar la disponibilitat.';
+                    });
             });
         })();
         </script>
