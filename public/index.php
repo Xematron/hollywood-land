@@ -145,12 +145,11 @@ unset($dia);
 <?php require __DIR__ . '/partials/navbar.php'; ?>
 
 <div class="container flex-grow-1">
-    <h1 class="mb-4">Cartellera</h1>
     <?php if (empty($dies)): ?>
         <p>No hi ha sessions properes.</p>
     <?php else: ?>
         <?php foreach ($dies as $dia): ?>
-            <h2 class="mt-5 mb-3 border-bottom pb-2"><?= htmlspecialchars($dia['etiqueta']) ?></h2>
+            <h2 class="mt-5 mb-3 border-bottom border-[#2a1a1a] pb-2"><?= htmlspecialchars($dia['etiqueta']) ?></h2>
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
                 <?php foreach ($dia['items'] as $item): ?>
                 <?php $esSessio = $item['tipus'] === 'sessio'; ?>

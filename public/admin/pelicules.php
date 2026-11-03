@@ -72,7 +72,8 @@ $pelicules = Pelicula::all();
 
     <h2 class="mt-4">Pel·lícules existents</h2>
     <?php foreach ($pelicules as $pelicula): ?>
-        <form method="post" class="d-flex flex-wrap gap-2 align-items-end mb-3 pb-3 border-bottom">
+        <div class="d-flex flex-wrap gap-2 align-items-end mb-3 pb-3 border-bottom">
+        <form method="post" class="d-flex flex-wrap gap-2 align-items-end">
             <input type="hidden" name="id" value="<?= (int) $pelicula['id'] ?>">
 
             <div>
@@ -101,8 +102,13 @@ $pelicules = Pelicula::all();
             </div>
 
             <button type="submit" name="accio" value="actualitzar" class="btn btn-sm btn-dark">Desar</button>
-            <button type="submit" name="accio" value="eliminar" class="btn btn-sm btn-outline-dark" onclick="return confirm('Eliminar aquesta pel·lícula?');">Eliminar</button>
         </form>
+        <form method="post" class="js-confirm" data-message="Eliminar aquesta pel·lícula?">
+            <input type="hidden" name="id" value="<?= (int) $pelicula['id'] ?>">
+            <input type="hidden" name="accio" value="eliminar">
+            <button type="submit" class="btn btn-sm btn-outline-dark">Eliminar</button>
+        </form>
+        </div>
     <?php endforeach; ?>
 
     <h2 class="mt-5">Crear pel·lícula nova</h2>
@@ -135,5 +141,6 @@ $pelicules = Pelicula::all();
     </form>
 </div>
 <?php require __DIR__ . '/../partials/footer.php'; ?>
+<?php require __DIR__ . '/../partials/confirm_modal.php'; ?>
 </body>
 </html>

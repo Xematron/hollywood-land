@@ -98,6 +98,10 @@ footer.bg-dark {
     color: var(--hl-gold);
 }
 
+.border-gold {
+    border-color: var(--hl-gold);
+}
+
 .text-gold-light {
     color: var(--hl-gold-light);
 }

@@ -13,7 +13,9 @@ $debat = Debat::findById($debatId);
 
 if ($debat === null) {
     http_response_code(404);
-    exit('Cine-fòrum no trobat.');
+    $missatge404 = 'Cine-fòrum no trobat.';
+    require __DIR__ . '/partials/error404.php';
+    exit;
 }
 
 $usuariId = (int) Auth::user()['id'];

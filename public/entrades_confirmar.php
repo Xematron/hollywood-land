@@ -19,7 +19,9 @@ $sessio = Sessio::findDetallById($sessioId);
 
 if ($sessio === null) {
     http_response_code(404);
-    exit('Sessió no trobada.');
+    $missatge404 = 'Sessió no trobada.';
+    require __DIR__ . '/partials/error404.php';
+    exit;
 }
 
 $butacaIdsSeleccionades = array_map('intval', $_POST['butaca_id'] ?? []);
@@ -62,7 +64,7 @@ $totalPagat = count($comprades) * (float) $sessio['preu'];
 <?php require __DIR__ . '/partials/navbar.php'; ?>
 
 <div class="container flex-grow-1">
-    <h1 class="mb-4">Resum de la compra</h1>
+    <h1 class="mb-4">Compra confirmada</h1>
 
     <?php if (empty($comprades) && empty($fallides)): ?>
         <div class="alert alert-warning">No has seleccionat cap butaca.</div>

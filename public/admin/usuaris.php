@@ -23,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($nom === '' || $email === '' || $password === '') {
             $error = 'Cal omplir tots els camps per crear un usuari.';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "L'email no és vàlid.";
         } elseif (!in_array($rol, $rolsValids, true)) {
             $error = 'Rol no vàlid.';
         } elseif (Usuari::findByEmail($email) !== null) {
@@ -37,7 +39,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email = trim($_POST['email'] ?? '');
         $rol = $_POST['rol'] ?? 'client';
 
-        if (!in_array($rol, $rolsValids, true)) {
+        if ($nom === '' || $email === '') {
+            $error = 'Cal omplir nom i email.';
+        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = "L'email no és vàlid.";
+        } elseif (!in_array($rol, $rolsValids, true)) {
             $error = 'Rol no vàlid.';
         } elseif ($id === (int) $usuariActual['id'] && $rol !== $usuariActual['rol']) {
             $error = 'No pots canviar el teu propi rol.';
@@ -80,7 +86,8 @@ $usuaris = Usuari::all();
 
     <h2 class="mt-4">Usuaris existents</h2>
     <?php foreach ($usuaris as $usuari): ?>
-        <form method="post" class="d-flex flex-wrap gap-2 align-items-center mb-2 pb-2 border-bottom">
+        <div class="d-flex flex-wrap gap-2 align-items-center mb-2 pb-2 border-bottom">
+        <form method="post" class="d-flex flex-wrap gap-2 align-items-center">
             <input type="hidden" name="id" value="<?= (int) $usuari['id'] ?>">
             <input type="text" name="nom" value="<?= htmlspecialchars($usuari['nom']) ?>" class="form-control form-control-sm w-auto" required>
             <input type="email" name="email" value="<?= htmlspecialchars($usuari['email']) ?>" class="form-control form-control-sm w-auto" required>
@@ -90,8 +97,13 @@ $usuaris = Usuari::all();
                 <?php endforeach; ?>
             </select>
             <button type="submit" name="accio" value="actualitzar" class="btn btn-sm btn-dark">Desar</button>
-            <button type="submit" name="accio" value="eliminar" class="btn btn-sm btn-outline-dark" onclick="return confirm('Eliminar aquest usuari?');">Eliminar</button>
         </form>
+        <form method="post" class="js-confirm" data-message="Eliminar aquest usuari?">
+            <input type="hidden" name="id" value="<?= (int) $usuari['id'] ?>">
+            <input type="hidden" name="accio" value="eliminar">
+            <button type="submit" class="btn btn-sm btn-outline-dark">Eliminar</button>
+        </form>
+        </div>
     <?php endforeach; ?>
 
     <h2 class="mt-5">Crear usuari nou</h2>
@@ -120,5 +132,6 @@ $usuaris = Usuari::all();
     </form>
 </div>
 <?php require __DIR__ . '/../partials/footer.php'; ?>
+<?php require __DIR__ . '/../partials/confirm_modal.php'; ?>
 </body>
 </html>

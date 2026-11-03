@@ -18,17 +18,6 @@ class Usuari
         return $usuari ?: null;
     }
 
-    public static function findById(int $id): ?array
-    {
-        $stmt = Database::getConnection()->prepare(
-            'SELECT * FROM Usuari WHERE id = :id'
-        );
-        $stmt->execute(['id' => $id]);
-        $usuari = $stmt->fetch();
-
-        return $usuari ?: null;
-    }
-
     public static function create(string $nom, string $email, string $password, string $rol = 'client'): int
     {
         $stmt = Database::getConnection()->prepare(

@@ -14,7 +14,9 @@ $sessio = Sessio::findDetallById($sessioId);
 
 if ($sessio === null) {
     http_response_code(404);
-    exit('Sessió no trobada.');
+    $missatge404 = 'Sessió no trobada.';
+    require __DIR__ . '/partials/error404.php';
+    exit;
 }
 
 $butaques = Butaca::perSala($sessio['sala_id']);
@@ -50,7 +52,7 @@ ksort($files);
             <span id="disponibilitat-info" class="text-muted small"></span>
         </div>
 
-        <form method="post" action="entrades_confirmar.php" id="form-entrades">
+        <form method="post" action="entrades_resum.php" id="form-entrades">
             <input type="hidden" name="sessio_id" value="<?= $sessio['id'] ?>">
 
             <div class="mb-4">
@@ -86,7 +88,7 @@ ksort($files);
             <div class="d-flex align-items-center gap-3">
                 <p class="mb-0">Butaques seleccionades: <strong id="num-seleccionades">0</strong></p>
                 <p class="mb-0">Total: <strong id="total-preu">0.00 €</strong></p>
-                <button type="submit" class="btn btn-dark" id="btn-comprar" disabled>Confirmar compra</button>
+                <button type="submit" class="btn btn-dark" id="btn-comprar" disabled>Revisar compra</button>
             </div>
         </form>
 

@@ -69,6 +69,41 @@ class Sessio
         return $sessio ?: null;
     }
 
+    public static function hiHaSolapament(int $salaId, string $data, string $hora, int $peliculaId, ?int $excloureId = null): bool
+    {
+        $stmtDurada = Database::getConnection()->prepare('SELECT durada_min FROM Pelicula WHERE id = :id');
+        $stmtDurada->execute(['id' => $peliculaId]);
+        $duradaNova = (int) $stmtDurada->fetchColumn();
+
+        $sql = 'SELECT s.hora, p.durada_min
+                FROM Sessio s
+                JOIN Pelicula p ON p.id = s.pelicula_id
+                WHERE s.sala_id = :sala_id AND s.data = :data';
+        $params = ['sala_id' => $salaId, 'data' => $data];
+
+        if ($excloureId !== null) {
+            $sql .= ' AND s.id != :exclou_id';
+            $params['exclou_id'] = $excloureId;
+        }
+
+        $stmt = Database::getConnection()->prepare($sql);
+        $stmt->execute($params);
+
+        $novaInici = strtotime($data . ' ' . $hora);
+        $novaFi = $novaInici + $duradaNova * 60;
+
+        foreach ($stmt->fetchAll() as $existent) {
+            $existentInici = strtotime($data . ' ' . $existent['hora']);
+            $existentFi = $existentInici + (int) $existent['durada_min'] * 60;
+
+            if ($novaInici < $existentFi && $existentInici < $novaFi) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static function create(
         int $peliculaId,
         int $salaId,

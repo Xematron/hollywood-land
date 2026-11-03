@@ -13,7 +13,9 @@ $sala = Sala::findById($salaId);
 
 if ($sala === null) {
     http_response_code(404);
-    exit('Sala no trobada.');
+    $missatge404 = 'Sala no trobada.';
+    require __DIR__ . '/../partials/error404.php';
+    exit;
 }
 
 $success = null;

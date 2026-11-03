@@ -25,6 +25,8 @@ $usuari = Auth::user();
         <a href="sales.php" class="btn btn-dark">Gestió de sales</a>
         <a href="pelicules.php" class="btn btn-dark">Gestió de pel·lícules</a>
         <a href="sessions.php" class="btn btn-dark">Gestió de sessions</a>
+        <a href="debats.php" class="btn btn-dark">Gestió de cine-fòrums</a>
+        <a href="activitats.php" class="btn btn-dark">Gestió d'activitats</a>
         <a href="informes.php" class="btn btn-dark">Informes i estadístiques</a>
     </div>
 

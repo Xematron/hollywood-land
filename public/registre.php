@@ -2,7 +2,13 @@
 
 require __DIR__ . '/../src/bootstrap.php';
 
+use HollywoodLand\Core\Auth;
 use HollywoodLand\Models\Usuari;
+
+if (Auth::isLoggedIn()) {
+    header('Location: /index.php');
+    exit;
+}
 
 $error = null;
 

@@ -16,17 +16,6 @@ class Pelicula
         return $stmt->fetchAll();
     }
 
-    public static function findById(int $id): ?array
-    {
-        $stmt = Database::getConnection()->prepare(
-            'SELECT * FROM Pelicula WHERE id = :id'
-        );
-        $stmt->execute(['id' => $id]);
-        $pelicula = $stmt->fetch();
-
-        return $pelicula ?: null;
-    }
-
     public static function create(
         string $titol,
         int $duradaMin,

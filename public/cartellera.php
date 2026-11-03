@@ -154,6 +154,11 @@ usort($items, fn ($a, $b) => $a['datahora'] <=> $b['datahora']);
     <?php if (empty($items)): ?>
         <p>No hi ha res programat properament.</p>
     <?php else: ?>
+        <div class="mb-3 input-group" style="max-width: 400px;">
+            <input type="text" id="cercaTitol" class="form-control" placeholder="Cerca per títol...">
+            <button type="button" id="cercaBoto" class="btn btn-dark">Cerca</button>
+        </div>
+        <p id="cercaSenseResultats" class="text-muted d-none">Cap resultat per aquesta cerca.</p>
         <table class="table table-striped align-middle">
             <thead>
                 <tr>
@@ -166,9 +171,9 @@ usort($items, fn ($a, $b) => $a['datahora'] <=> $b['datahora']);
                     <th></th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="cartelleraBody">
                 <?php foreach ($items as $item): ?>
-                <tr class="row-<?= $item['tipus'] ?>">
+                <tr class="row-<?= $item['tipus'] ?>" data-titol="<?= htmlspecialchars(mb_strtolower($item['titol'])) ?>">
                     <td>
                         <?php if ($item['tipus'] === 'sessio'): ?>
                             <span class="badge text-bg-dark">Sessió</span>
@@ -252,5 +257,37 @@ usort($items, fn ($a, $b) => $a['datahora'] <=> $b['datahora']);
 </div>
 <?php require __DIR__ . '/partials/footer.php'; ?>
 <?php require __DIR__ . '/partials/confirm_modal.php'; ?>
+<script>
+    const cercaInput = document.getElementById('cercaTitol');
+    const cercaBoto = document.getElementById('cercaBoto');
+
+    if (cercaInput && cercaBoto) {
+        const files = document.querySelectorAll('#cartelleraBody tr');
+        const senseResultats = document.getElementById('cercaSenseResultats');
+
+        const filtrar = () => {
+            const terme = cercaInput.value.trim().toLowerCase();
+            let visibles = 0;
+
+            files.forEach((fila) => {
+                const coincideix = fila.dataset.titol.includes(terme);
+                fila.classList.toggle('d-none', !coincideix);
+                if (coincideix) {
+                    visibles++;
+                }
+            });
+
+            senseResultats.classList.toggle('d-none', visibles > 0);
+        };
+
+        cercaBoto.addEventListener('click', filtrar);
+        cercaInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                filtrar();
+            }
+        });
+    }
+</script>
 </body>
 </html>

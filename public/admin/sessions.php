@@ -37,6 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = "L'hora ha de ser en intervals de 15 minuts (00, 15, 30, 45).";
         } elseif ($data < date('Y-m-d')) {
             $error = 'No es pot programar una sessió amb data passada.';
+        } elseif (Sessio::hiHaSolapament($salaId, $data, $hora, $peliculaId, $accio === 'actualitzar' ? $id : null)) {
+            $error = 'Ja hi ha una altra sessió a aquesta sala que se solapa amb aquest horari.';
         } elseif ($accio === 'crear') {
             Sessio::create($peliculaId, $salaId, $data, $hora, $preu, $idiomaSubtitols);
             $success = 'Sessió creada correctament.';
@@ -89,17 +91,19 @@ for ($h = 0; $h < 24; $h++) {
     <?php foreach ($sessions as $sessio): ?>
         <?php $esPassada = $sessio['data'] < date('Y-m-d'); ?>
         <?php if ($esPassada): ?>
-            <form method="post" class="d-flex flex-wrap gap-2 align-items-center mb-2 pb-2 border-bottom">
+            <form method="post" class="d-flex flex-wrap gap-2 align-items-center mb-2 pb-2 border-bottom js-confirm" data-message="Eliminar aquesta sessió?">
                 <input type="hidden" name="id" value="<?= (int) $sessio['id'] ?>">
+                <input type="hidden" name="accio" value="eliminar">
                 <span>
                     <?= htmlspecialchars($sessio['data']) ?> <?= htmlspecialchars(substr($sessio['hora'], 0, 5)) ?>h
                     — <?= htmlspecialchars($sessio['titol']) ?> (<?= htmlspecialchars($sessio['sala_nom']) ?>)
                     — <em>sessió passada, no editable</em>
                 </span>
-                <button type="submit" name="accio" value="eliminar" class="btn btn-sm btn-outline-dark" onclick="return confirm('Eliminar aquesta sessió?');">Eliminar</button>
+                <button type="submit" class="btn btn-sm btn-outline-dark">Eliminar</button>
             </form>
         <?php else: ?>
-        <form method="post" class="d-flex flex-wrap gap-2 align-items-end mb-3 pb-3 border-bottom">
+        <div class="d-flex flex-wrap gap-2 align-items-end mb-3 pb-3 border-bottom">
+        <form method="post" class="d-flex flex-wrap gap-2 align-items-end">
             <input type="hidden" name="id" value="<?= (int) $sessio['id'] ?>">
 
             <div>
@@ -144,8 +148,13 @@ for ($h = 0; $h < 24; $h++) {
             </div>
 
             <button type="submit" name="accio" value="actualitzar" class="btn btn-sm btn-dark">Desar</button>
-            <button type="submit" name="accio" value="eliminar" class="btn btn-sm btn-outline-dark" onclick="return confirm('Eliminar aquesta sessió?');">Eliminar</button>
         </form>
+        <form method="post" class="js-confirm" data-message="Eliminar aquesta sessió?">
+            <input type="hidden" name="id" value="<?= (int) $sessio['id'] ?>">
+            <input type="hidden" name="accio" value="eliminar">
+            <button type="submit" class="btn btn-sm btn-outline-dark">Eliminar</button>
+        </form>
+        </div>
         <?php endif; ?>
     <?php endforeach; ?>
 
@@ -192,5 +201,6 @@ for ($h = 0; $h < 24; $h++) {
     </form>
 </div>
 <?php require __DIR__ . '/../partials/footer.php'; ?>
+<?php require __DIR__ . '/../partials/confirm_modal.php'; ?>
 </body>
 </html>
