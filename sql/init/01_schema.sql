@@ -98,6 +98,7 @@ CREATE TABLE InscripcioDebat (
     id INT AUTO_INCREMENT PRIMARY KEY,
     debat_id INT NOT NULL,
     usuari_id INT NOT NULL,
+    quantitat INT NOT NULL DEFAULT 1,
     UNIQUE (debat_id, usuari_id),
     FOREIGN KEY (debat_id) REFERENCES Debat(id),
     FOREIGN KEY (usuari_id) REFERENCES Usuari(id)
@@ -107,6 +108,7 @@ CREATE TABLE InscripcioActivitat (
     id INT AUTO_INCREMENT PRIMARY KEY,
     activitat_id INT NOT NULL,
     usuari_id INT NOT NULL,
+    quantitat INT NOT NULL DEFAULT 1,
     UNIQUE (activitat_id, usuari_id),
     FOREIGN KEY (activitat_id) REFERENCES Activitat(id),
     FOREIGN KEY (usuari_id) REFERENCES Usuari(id)

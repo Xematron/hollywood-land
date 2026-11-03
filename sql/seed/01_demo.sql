@@ -1,7 +1,7 @@
 SET NAMES utf8mb4;
 
 INSERT INTO Sala (nom, capacitat) VALUES
-('Sala 1 - Lumière', 80),
+('Sala 1 - Marilyn', 80),
 ('Sala 2 - Bogart', 60);
 
 INSERT INTO Pelicula (titol, durada_min, idioma_original, sinopsi, classificacio) VALUES

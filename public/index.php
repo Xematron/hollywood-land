@@ -6,6 +6,7 @@ use HollywoodLand\Core\Auth;
 use HollywoodLand\Models\Activitat;
 use HollywoodLand\Models\Debat;
 use HollywoodLand\Models\InscripcioActivitat;
+use HollywoodLand\Models\InscripcioDebat;
 use HollywoodLand\Models\Sessio;
 
 $missatgesActivitat = [];
@@ -18,14 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activitat_id'])) {
     $usuariId = (int) Auth::user()['id'];
 
     if ($accio === 'inscriure') {
+        $quantitat = max(1, (int) ($_POST['quantitat'] ?? 1));
         $activitatInfo = Activitat::findById($activitatId);
         $inscrits = InscripcioActivitat::comptar($activitatId);
 
-        if ($activitatInfo !== null && $activitatInfo['aforament'] !== null && $inscrits >= (int) $activitatInfo['aforament']) {
-            $missatgesActivitat[$activitatId] = ['tipus' => 'danger', 'text' => 'Aforament complet.'];
+        if ($activitatInfo !== null && $activitatInfo['aforament'] !== null && $inscrits + $quantitat > (int) $activitatInfo['aforament']) {
+            $missatgesActivitat[$activitatId] = ['tipus' => 'danger', 'text' => 'No queden prou places per a aquesta quantitat.'];
         } else {
             try {
-                InscripcioActivitat::inscriure($activitatId, $usuariId);
+                InscripcioActivitat::inscriure($activitatId, $usuariId, $quantitat);
                 $missatgesActivitat[$activitatId] = ['tipus' => 'success', 'text' => 'Inscrit correctament.'];
             } catch (PDOException $e) {
                 $missatgesActivitat[$activitatId] = ['tipus' => 'warning', 'text' => 'Ja hi estaves inscrit.'];
@@ -34,6 +36,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activitat_id'])) {
     } elseif ($accio === 'cancelar') {
         InscripcioActivitat::cancelar($activitatId, $usuariId);
         $missatgesActivitat[$activitatId] = ['tipus' => 'success', 'text' => 'Inscripció cancel·lada.'];
+    }
+}
+
+$missatgesDebat = [];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['debat_id'])) {
+    Auth::requireLogin();
+
+    $debatId = (int) $_POST['debat_id'];
+    $accio = $_POST['accio'] ?? '';
+    $usuariId = (int) Auth::user()['id'];
+
+    if ($accio === 'inscriure') {
+        $quantitat = max(1, (int) ($_POST['quantitat'] ?? 1));
+        $debatInfo = Debat::findById($debatId);
+        $inscrits = InscripcioDebat::comptar($debatId);
+
+        if ($debatInfo !== null && $debatInfo['aforament'] !== null && $inscrits + $quantitat > (int) $debatInfo['aforament']) {
+            $missatgesDebat[$debatId] = ['tipus' => 'danger', 'text' => 'No queden prou places per a aquesta quantitat.'];
+        } else {
+            try {
+                InscripcioDebat::inscriure($debatId, $usuariId, $quantitat);
+                $missatgesDebat[$debatId] = ['tipus' => 'success', 'text' => 'Inscrit correctament.'];
+            } catch (PDOException $e) {
+                $missatgesDebat[$debatId] = ['tipus' => 'warning', 'text' => 'Ja hi estaves inscrit.'];
+            }
+        }
+    } elseif ($accio === 'cancelar') {
+        InscripcioDebat::cancelar($debatId, $usuariId);
+        $missatgesDebat[$debatId] = ['tipus' => 'success', 'text' => 'Inscripció cancel·lada.'];
     }
 }
 
@@ -105,13 +137,18 @@ foreach (Sessio::cartellera() as $s) {
 
 foreach (Debat::propers() as $d) {
     $titol = 'Cine-fòrum: ' . ($d['titol'] ?? $d['pelicula_titol']);
+    $debatId = (int) $d['id'];
     afegirAlDia($dies, $d['data'], [
         'tipus' => 'debat',
-        'id' => $d['id'],
+        'id' => $debatId,
         'hora' => sumaMinuts($d['hora_sessio'], (int) $d['pelicula_durada']),
         'titol' => $titol,
-        'detall' => $d['durada_min'] . ' min' . ($d['aforament'] ? ' · aforament ' . $d['aforament'] : ''),
+        'detall' => $d['durada_min'] . ' min',
+        'sala' => $d['sala_nom'],
+        'sinopsi' => $d['descripcio'],
         'poster' => $titol,
+        'aforament' => $d['aforament'],
+        'inscrits' => InscripcioDebat::comptar($debatId),
     ]);
 }
 
@@ -124,6 +161,8 @@ foreach (Activitat::properes() as $a) {
         'hora' => substr($a['hora'], 0, 5),
         'titol' => $titol,
         'detall' => $a['durada_min'] . ' min',
+        'sala' => $a['sala_nom'],
+        'sinopsi' => $a['descripcio'],
         'poster' => $titol,
         'aforament' => $a['aforament'],
         'inscrits' => InscripcioActivitat::comptar($activitatId),
@@ -162,11 +201,11 @@ unset($dia);
                             <span class="badge <?= $esSessio ? 'text-bg-dark' : 'text-bg-warning text-dark' ?> mb-2"><?= htmlspecialchars($item['hora']) ?>h</span>
                             <h5 class="card-title"><?= htmlspecialchars($item['titol']) ?></h5>
                             <p class="card-text text-muted mb-0"><?= htmlspecialchars($item['detall']) ?></p>
-                            <?php if ($esSessio): ?>
+                            <?php if (!empty($item['sala'])): ?>
                                 <p class="card-text text-muted mb-0"><?= htmlspecialchars($item['sala']) ?></p>
-                                <?php if ($item['sinopsi']): ?>
-                                    <p class="card-text small mt-2"><?= htmlspecialchars($item['sinopsi']) ?></p>
-                                <?php endif; ?>
+                            <?php endif; ?>
+                            <?php if (!empty($item['sinopsi'])): ?>
+                                <p class="card-text small mt-2"><?= htmlspecialchars($item['sinopsi']) ?></p>
                             <?php endif; ?>
                         </div>
                         <?php if ($esSessio): ?>
@@ -174,8 +213,36 @@ unset($dia);
                                 <a href="entrades.php?sessio_id=<?= (int) $item['sessio_id'] ?>" class="btn btn-sm btn-dark w-100">Comprar entrades</a>
                             </div>
                         <?php elseif ($esDebat): ?>
+                            <?php
+                                $debatId = $item['id'];
+                                $jaInscritDebat = $usuari !== null && InscripcioDebat::jaInscrit($debatId, (int) $usuari['id']);
+                                $pleDebat = $item['aforament'] !== null && $item['inscrits'] >= (int) $item['aforament'] && !$jaInscritDebat;
+                            ?>
                             <div class="card-footer bg-white border-0">
-                                <a href="debat.php?id=<?= (int) $item['id'] ?>" class="btn btn-sm btn-dark w-100">Veure debat</a>
+                                <?php if (isset($missatgesDebat[$debatId])): ?>
+                                    <div class="small text-<?= $missatgesDebat[$debatId]['tipus'] === 'success' ? 'success' : ($missatgesDebat[$debatId]['tipus'] === 'warning' ? 'warning' : 'danger') ?> mb-1">
+                                        <?= htmlspecialchars($missatgesDebat[$debatId]['text']) ?>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if ($usuari === null): ?>
+                                    <a href="login.php?redirect=<?= urlencode('/index.php') ?>" class="btn btn-sm btn-dark w-100">Inscriure't al debat</a>
+                                <?php elseif ($jaInscritDebat): ?>
+                                    <form method="post" class="js-confirm" data-message="Vols cancel·lar la inscripció?">
+                                        <input type="hidden" name="debat_id" value="<?= $debatId ?>">
+                                        <input type="hidden" name="accio" value="cancelar">
+                                        <button type="submit" class="btn btn-sm btn-outline-dark w-100">Cancel·la inscripció</button>
+                                    </form>
+                                <?php elseif ($pleDebat): ?>
+                                    <span class="badge text-bg-secondary">Aforament complet</span>
+                                <?php else: ?>
+                                    <?php $maxQuantitatDebat = $item['aforament'] !== null ? max(1, min(10, (int) $item['aforament'] - (int) $item['inscrits'])) : 10; ?>
+                                    <form method="post" class="js-confirm" data-message="Vols inscriure't a aquest debat?" data-quantitat-max="<?= $maxQuantitatDebat ?>">
+                                        <input type="hidden" name="debat_id" value="<?= $debatId ?>">
+                                        <input type="hidden" name="accio" value="inscriure">
+                                        <button type="submit" class="btn btn-sm btn-dark w-100">Inscriure't al debat</button>
+                                    </form>
+                                <?php endif; ?>
                             </div>
                         <?php elseif ($esActivitat): ?>
                             <?php
@@ -191,7 +258,7 @@ unset($dia);
                                 <?php endif; ?>
 
                                 <?php if ($usuari === null): ?>
-                                    <a href="login.php?redirect=<?= urlencode('/index.php') ?>" class="btn btn-sm btn-dark w-100">Inicia sessió</a>
+                                    <a href="login.php?redirect=<?= urlencode('/index.php') ?>" class="btn btn-sm btn-dark w-100">Inscriure't a l'activitat</a>
                                 <?php elseif ($jaInscritActivitat): ?>
                                     <form method="post" class="js-confirm" data-message="Vols cancel·lar la inscripció?">
                                         <input type="hidden" name="activitat_id" value="<?= $activitatId ?>">
@@ -201,7 +268,8 @@ unset($dia);
                                 <?php elseif ($pleActivitat): ?>
                                     <span class="badge text-bg-secondary">Aforament complet</span>
                                 <?php else: ?>
-                                    <form method="post" class="js-confirm" data-message="Vols inscriure't a aquesta activitat?">
+                                    <?php $maxQuantitatActivitat = $item['aforament'] !== null ? max(1, min(10, (int) $item['aforament'] - (int) $item['inscrits'])) : 10; ?>
+                                    <form method="post" class="js-confirm" data-message="Vols inscriure't a aquesta activitat?" data-quantitat-max="<?= $maxQuantitatActivitat ?>">
                                         <input type="hidden" name="activitat_id" value="<?= $activitatId ?>">
                                         <input type="hidden" name="accio" value="inscriure">
                                         <button type="submit" class="btn btn-sm btn-dark w-100">Inscriu-t'hi</button>

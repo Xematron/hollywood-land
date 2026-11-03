@@ -26,6 +26,7 @@ foreach ($inscripcions as $i) {
         'durada' => (int) $i['durada_min'],
         'es_debat' => true,
         'debat_id' => (int) $i['debat_id'],
+        'quantitat' => (int) $i['quantitat'],
     ];
 }
 
@@ -38,6 +39,7 @@ foreach ($inscripcionsActivitats as $a) {
         'durada' => (int) $a['durada_min'],
         'es_debat' => false,
         'activitat_id' => (int) $a['activitat_id'],
+        'quantitat' => (int) $a['quantitat'],
     ];
 }
 
@@ -106,6 +108,7 @@ usort($activitats, fn ($a, $b) => $a['data'] . $a['hora'] <=> $b['data'] . $b['h
                     <th>Data</th>
                     <th>Hora</th>
                     <th>Durada</th>
+                    <th>Persones</th>
                     <th></th>
                 </tr>
             </thead>
@@ -117,6 +120,7 @@ usort($activitats, fn ($a, $b) => $a['data'] . $a['hora'] <=> $b['data'] . $b['h
                     <td><?= htmlspecialchars($a['data']) ?></td>
                     <td><?= htmlspecialchars($a['hora']) ?></td>
                     <td><?= $a['durada'] ?> min</td>
+                    <td><?= $a['quantitat'] ?></td>
                     <td>
                         <?php if ($a['es_debat']): ?>
                             <a href="debat.php?id=<?= $a['debat_id'] ?>" class="btn btn-sm btn-outline-dark">Gestionar</a>

@@ -25,13 +25,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accio = $_POST['accio'] ?? '';
 
     if ($accio === 'inscriure') {
+        $quantitat = max(1, (int) ($_POST['quantitat'] ?? 1));
         $inscrits = InscripcioDebat::comptar($debatId);
 
-        if ($debat['aforament'] !== null && $inscrits >= (int) $debat['aforament']) {
-            $missatge = ['tipus' => 'danger', 'text' => 'Aforament complet.'];
+        if ($debat['aforament'] !== null && $inscrits + $quantitat > (int) $debat['aforament']) {
+            $missatge = ['tipus' => 'danger', 'text' => 'No queden prou places per a aquesta quantitat.'];
         } else {
             try {
-                InscripcioDebat::inscriure($debatId, $usuariId);
+                InscripcioDebat::inscriure($debatId, $usuariId, $quantitat);
                 $missatge = ['tipus' => 'success', 'text' => 'Inscripció confirmada.'];
             } catch (PDOException $e) {
                 $missatge = ['tipus' => 'warning', 'text' => 'Ja estaves inscrit.'];
@@ -45,7 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 $inscrits = InscripcioDebat::comptar($debatId);
 $jaInscrit = InscripcioDebat::jaInscrit($debatId, $usuariId);
+$quantitatPropia = $jaInscrit ? InscripcioDebat::quantitatInscrita($debatId, $usuariId) : 0;
 $ple = $debat['aforament'] !== null && $inscrits >= (int) $debat['aforament'] && !$jaInscrit;
+$maxQuantitat = $debat['aforament'] !== null ? max(1, min(10, (int) $debat['aforament'] - $inscrits)) : 10;
 
 $horaInici = DateTime::createFromFormat('H:i:s', $debat['hora_sessio']);
 $horaInici->modify('+' . (int) $debat['pelicula_durada'] . ' minutes');
@@ -81,6 +84,7 @@ $haPassat = $debatDateTime < new DateTime();
     <?php if ($haPassat): ?>
         <div class="alert alert-warning">Aquest cine-fòrum ja ha passat.</div>
     <?php elseif ($jaInscrit): ?>
+        <p>Inscrit amb <strong><?= $quantitatPropia ?></strong> <?= $quantitatPropia === 1 ? 'persona' : 'persones' ?>.</p>
         <form method="post" class="js-confirm" data-message="Vols cancel·lar la inscripció?">
             <input type="hidden" name="accio" value="cancelar">
             <button type="submit" class="btn btn-outline-dark">Cancel·la la inscripció</button>
@@ -88,7 +92,7 @@ $haPassat = $debatDateTime < new DateTime();
     <?php elseif ($ple): ?>
         <div class="alert alert-secondary">Aforament complet.</div>
     <?php else: ?>
-        <form method="post" class="js-confirm" data-message="Vols inscriure't a aquest cine-fòrum?">
+        <form method="post" class="js-confirm" data-message="Vols inscriure't a aquest cine-fòrum?" data-quantitat-max="<?= $maxQuantitat ?>">
             <input type="hidden" name="accio" value="inscriure">
             <button type="submit" class="btn btn-dark">Inscriu-m'hi</button>
         </form>

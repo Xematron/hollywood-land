@@ -1,5 +1,5 @@
 -- Genera les butaques per a les sales existents (10 per fila).
--- Sala 1 - Lumière: 8 files (A-H) x 10 = 80. Sala 2 - Bogart: 6 files (A-F) x 10 = 60.
+-- Sala 1 - Marilyn: 8 files (A-H) x 10 = 80. Sala 2 - Bogart: 6 files (A-F) x 10 = 60.
 
 INSERT INTO Butaca (sala_id, fila, numero) VALUES
 (1, 'A', 1),

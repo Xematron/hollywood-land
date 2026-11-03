@@ -9,7 +9,7 @@ class InscripcioActivitat
     public static function comptar(int $activitatId): int
     {
         $stmt = Database::getConnection()->prepare(
-            'SELECT COUNT(*) FROM InscripcioActivitat WHERE activitat_id = :activitat_id'
+            'SELECT COALESCE(SUM(quantitat), 0) FROM InscripcioActivitat WHERE activitat_id = :activitat_id'
         );
         $stmt->execute(['activitat_id' => $activitatId]);
 
@@ -26,12 +26,22 @@ class InscripcioActivitat
         return (bool) $stmt->fetchColumn();
     }
 
-    public static function inscriure(int $activitatId, int $usuariId): void
+    public static function quantitatInscrita(int $activitatId, int $usuariId): int
     {
         $stmt = Database::getConnection()->prepare(
-            'INSERT INTO InscripcioActivitat (activitat_id, usuari_id) VALUES (:activitat_id, :usuari_id)'
+            'SELECT quantitat FROM InscripcioActivitat WHERE activitat_id = :activitat_id AND usuari_id = :usuari_id'
         );
         $stmt->execute(['activitat_id' => $activitatId, 'usuari_id' => $usuariId]);
+
+        return (int) $stmt->fetchColumn();
+    }
+
+    public static function inscriure(int $activitatId, int $usuariId, int $quantitat = 1): void
+    {
+        $stmt = Database::getConnection()->prepare(
+            'INSERT INTO InscripcioActivitat (activitat_id, usuari_id, quantitat) VALUES (:activitat_id, :usuari_id, :quantitat)'
+        );
+        $stmt->execute(['activitat_id' => $activitatId, 'usuari_id' => $usuariId, 'quantitat' => $quantitat]);
     }
 
     public static function cancelar(int $activitatId, int $usuariId): void
@@ -45,7 +55,7 @@ class InscripcioActivitat
     public static function findByUsuari(int $usuariId): array
     {
         $stmt = Database::getConnection()->prepare(
-            "SELECT i.id, a.id AS activitat_id, a.tipus, a.titol, a.data, a.hora, a.durada_min, a.aforament
+            "SELECT i.id, i.quantitat, a.id AS activitat_id, a.tipus, a.titol, a.data, a.hora, a.durada_min, a.aforament
              FROM InscripcioActivitat i
              JOIN Activitat a ON a.id = i.activitat_id
              WHERE i.usuari_id = :usuari_id

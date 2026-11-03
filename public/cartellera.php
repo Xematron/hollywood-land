@@ -20,14 +20,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['debat_id'])) {
     $usuariId = (int) Auth::user()['id'];
 
     if ($accio === 'inscriure') {
+        $quantitat = max(1, (int) ($_POST['quantitat'] ?? 1));
         $debatInfo = Debat::findById($debatId);
         $inscrits = InscripcioDebat::comptar($debatId);
 
-        if ($debatInfo !== null && $debatInfo['aforament'] !== null && $inscrits >= (int) $debatInfo['aforament']) {
-            $missatges[$debatId] = ['tipus' => 'danger', 'text' => 'Aforament complet.'];
+        if ($debatInfo !== null && $debatInfo['aforament'] !== null && $inscrits + $quantitat > (int) $debatInfo['aforament']) {
+            $missatges[$debatId] = ['tipus' => 'danger', 'text' => 'No queden prou places per a aquesta quantitat.'];
         } else {
             try {
-                InscripcioDebat::inscriure($debatId, $usuariId);
+                InscripcioDebat::inscriure($debatId, $usuariId, $quantitat);
                 $missatges[$debatId] = ['tipus' => 'success', 'text' => 'Inscrit correctament.'];
             } catch (PDOException $e) {
                 $missatges[$debatId] = ['tipus' => 'warning', 'text' => 'Ja hi estaves inscrit.'];
@@ -47,14 +48,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activitat_id'])) {
     $usuariId = (int) Auth::user()['id'];
 
     if ($accio === 'inscriure') {
+        $quantitat = max(1, (int) ($_POST['quantitat'] ?? 1));
         $activitatInfo = Activitat::findById($activitatId);
         $inscrits = InscripcioActivitat::comptar($activitatId);
 
-        if ($activitatInfo !== null && $activitatInfo['aforament'] !== null && $inscrits >= (int) $activitatInfo['aforament']) {
-            $missatgesActivitat[$activitatId] = ['tipus' => 'danger', 'text' => 'Aforament complet.'];
+        if ($activitatInfo !== null && $activitatInfo['aforament'] !== null && $inscrits + $quantitat > (int) $activitatInfo['aforament']) {
+            $missatgesActivitat[$activitatId] = ['tipus' => 'danger', 'text' => 'No queden prou places per a aquesta quantitat.'];
         } else {
             try {
-                InscripcioActivitat::inscriure($activitatId, $usuariId);
+                InscripcioActivitat::inscriure($activitatId, $usuariId, $quantitat);
                 $missatgesActivitat[$activitatId] = ['tipus' => 'success', 'text' => 'Inscrit correctament.'];
             } catch (PDOException $e) {
                 $missatgesActivitat[$activitatId] = ['tipus' => 'warning', 'text' => 'Ja hi estaves inscrit.'];
@@ -213,7 +215,8 @@ usort($items, fn ($a, $b) => $a['datahora'] <=> $b['datahora']);
                             <?php elseif ($ple): ?>
                                 <span class="badge text-bg-secondary">Ple</span>
                             <?php else: ?>
-                                <form method="post" class="d-inline js-confirm" data-message="Vols inscriure't a aquest cine-fòrum?">
+                                <?php $maxQuantitat = $item['aforament'] !== null ? max(1, min(10, (int) $item['aforament'] - (int) $item['inscrits'])) : 10; ?>
+                                <form method="post" class="d-inline js-confirm" data-message="Vols inscriure't a aquest cine-fòrum?" data-quantitat-max="<?= $maxQuantitat ?>">
                                     <input type="hidden" name="debat_id" value="<?= $debatId ?>">
                                     <input type="hidden" name="accio" value="inscriure">
                                     <button type="submit" class="btn btn-sm btn-dark">Inscriu-m'hi</button>
@@ -241,7 +244,8 @@ usort($items, fn ($a, $b) => $a['datahora'] <=> $b['datahora']);
                             <?php elseif ($pleActivitat): ?>
                                 <span class="badge text-bg-secondary">Ple</span>
                             <?php else: ?>
-                                <form method="post" class="d-inline js-confirm" data-message="Vols inscriure't a aquesta activitat?">
+                                <?php $maxQuantitatActivitat = $item['aforament'] !== null ? max(1, min(10, (int) $item['aforament'] - (int) $item['inscrits'])) : 10; ?>
+                                <form method="post" class="d-inline js-confirm" data-message="Vols inscriure't a aquesta activitat?" data-quantitat-max="<?= $maxQuantitatActivitat ?>">
                                     <input type="hidden" name="activitat_id" value="<?= $activitatId ?>">
                                     <input type="hidden" name="accio" value="inscriure">
                                     <button type="submit" class="btn btn-sm btn-dark">Inscriu-m'hi</button>

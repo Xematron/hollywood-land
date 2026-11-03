@@ -24,12 +24,40 @@
     var modalBody = document.getElementById('confirmModalBody');
     var btnConfirm = document.getElementById('confirmModalBtn');
     var formPendent = null;
+    var selectQuantitat = null;
 
     document.querySelectorAll('form.js-confirm').forEach(function (form) {
         form.addEventListener('submit', function (e) {
             e.preventDefault();
             formPendent = form;
-            modalBody.textContent = form.dataset.message || 'Estàs segur?';
+            selectQuantitat = null;
+            modalBody.innerHTML = '';
+
+            var missatge = document.createElement('p');
+            missatge.textContent = form.dataset.message || 'Estàs segur?';
+            modalBody.appendChild(missatge);
+
+            var max = parseInt(form.dataset.quantitatMax || '', 10);
+            if (!isNaN(max) && max > 0) {
+                var label = document.createElement('label');
+                label.className = 'form-label';
+                label.setAttribute('for', 'confirmModalQuantitat');
+                label.textContent = 'Nombre de persones';
+
+                selectQuantitat = document.createElement('select');
+                selectQuantitat.className = 'form-select';
+                selectQuantitat.id = 'confirmModalQuantitat';
+                for (var q = 1; q <= max; q++) {
+                    var opt = document.createElement('option');
+                    opt.value = q;
+                    opt.textContent = q;
+                    selectQuantitat.appendChild(opt);
+                }
+
+                modalBody.appendChild(label);
+                modalBody.appendChild(selectQuantitat);
+            }
+
             modal.show();
         });
     });
@@ -37,6 +65,16 @@
     btnConfirm.addEventListener('click', function () {
         modal.hide();
         if (formPendent) {
+            if (selectQuantitat) {
+                var input = formPendent.querySelector('input[name="quantitat"]');
+                if (!input) {
+                    input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'quantitat';
+                    formPendent.appendChild(input);
+                }
+                input.value = selectQuantitat.value;
+            }
             formPendent.submit();
         }
     });
