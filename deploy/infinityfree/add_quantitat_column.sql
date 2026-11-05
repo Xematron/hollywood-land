@@ -1,0 +1,2 @@
+ALTER TABLE InscripcioDebat ADD COLUMN quantitat INT NOT NULL DEFAULT 1;
+ALTER TABLE InscripcioActivitat ADD COLUMN quantitat INT NOT NULL DEFAULT 1;
