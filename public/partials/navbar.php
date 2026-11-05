@@ -21,12 +21,11 @@
     </nav>
     <nav class="navbar navbar-dark navbar-links py-1 mb-4">
         <div class="container my-2 d-flex justify-content-start gap-4">
-            <a class="links text-chestnut" href="/cartellera.php">Cartellera</a>
             <a class="links text-chestnut" href="/cartellera.php">Comprar entrades</a>
             <?php if (isset($_SESSION['user_id']) && $_SESSION['rol'] === 'client'): ?>
                 <a class="links text-chestnut" href="/les-meves-entrades.php">Les meves entrades</a>
             <?php endif; ?>
-            <a class="links text-chestnut" href="#">Restaurant</a>
+            <a class="links text-chestnut" href="/restaurant.php">Restaurant</a>
         </div>
     </nav>
 </header>

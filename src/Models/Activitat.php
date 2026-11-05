@@ -97,7 +97,7 @@ class Activitat
                     sa.nom AS sala_nom
              FROM Activitat a
              LEFT JOIN Sala sa ON sa.id = a.sala_id
-             WHERE a.data >= "2026-11-01"
+             WHERE a.data >= CURDATE()
              ORDER BY a.data, a.hora'
         );
 

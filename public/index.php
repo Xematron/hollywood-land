@@ -184,6 +184,7 @@ unset($dia);
 <?php require __DIR__ . '/partials/navbar.php'; ?>
 
 <div class="container flex-grow-1">
+    <h1 class="mt-4">Cartellera</h1>
     <?php if (empty($dies)): ?>
         <p>No hi ha sessions properes.</p>
     <?php else: ?>
