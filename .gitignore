@@ -3,3 +3,4 @@ presentacio.md
 .env
 src/Config/env.local.php
 backups/
+deploy/infinityfree/*.local.txt
