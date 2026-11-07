@@ -12,13 +12,13 @@ require __DIR__ . '/../src/bootstrap.php';
 
 <div class="container flex-grow-1">
     <h1 class="mt-4">Restaurant</h1>
-    <p class="lead">El nostre diner temàtic dels anys 50, al mateix edifici que les sales.</p>
+    <p class="lead"><strong>El nostre diner temàtic dels anys 50.</strong></p>
 
     <p>
         Abans o després de la sessió, para't a la nostra cafeteria ambientada en l'època
-        daurada de Hollywood: neons, bimbolles de cromats i la banda sonora dels clàssics
+        daurada de Hollywood: neons, estrelles de la fama i la banda sonora dels clàssics
         que projectem a les sales. Un espai pensat per allargar la conversa del cine-fòrum
-        amb un cafè, un batut o un mos abans de tornar a casa.
+        amb un cafè, un batut o un menú complet abans de tornar a casa.
     </p>
 
     <p class="text-muted">
