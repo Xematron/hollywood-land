@@ -32,6 +32,16 @@ class Database
             } catch (PDOException $e) {
                 throw new PDOException('Error de connexió a la BD: ' . $e->getMessage(), (int) $e->getCode());
             }
+
+            // Alinea NOW()/CURDATE()/CURRENT_TIMESTAMP de MySQL amb la zona horària de PHP.
+            // S'envia el desplaçament numèric (ex. +01:00) i no el nom de zona, perquè
+            // els hostings compartits sovint no tenen carregades les taules de zones.
+            // Si el servidor ho rebutgés, es continua amb l'hora per defecte.
+            try {
+                self::$instance->exec("SET time_zone = '" . date('P') . "'");
+            } catch (PDOException $e) {
+                // sense efecte: es manté la zona horària del servidor
+            }
         }
 
         return self::$instance;

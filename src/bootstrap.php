@@ -7,6 +7,10 @@ if (is_file(__DIR__ . '/Config/env.local.php')) {
     require __DIR__ . '/Config/env.local.php';
 }
 
+// El hosting té el rellotge en una altra zona horària; fixem la del cinema
+// perquè date()/DateTime (i les comprovacions de "data passada") siguin correctes.
+date_default_timezone_set('Europe/Madrid');
+
 spl_autoload_register(function (string $class): void {
     $prefix = 'HollywoodLand\\';
     if (!str_starts_with($class, $prefix)) {

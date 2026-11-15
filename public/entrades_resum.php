@@ -24,6 +24,16 @@ if ($sessio === null) {
     exit;
 }
 
+// Una sessió que ja ha començat no admet compra (es valida a cada pas del flux,
+// també al servidor, per si algú envia el POST directament).
+if (new DateTime($sessio['data'] . ' ' . $sessio['hora']) <= new DateTime()) {
+    http_response_code(410);
+    $titol404 = 'Sessió tancada';
+    $missatge404 = 'Aquesta sessió ja ha començat i no admet la compra d\'entrades.';
+    require __DIR__ . '/partials/error404.php';
+    exit;
+}
+
 $butacaIdsSeleccionades = array_map('intval', $_POST['butaca_id'] ?? []);
 $ocupades = Entrada::ocupades($sessioId);
 
