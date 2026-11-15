@@ -4,6 +4,7 @@ require __DIR__ . '/../../src/bootstrap.php';
 
 use HollywoodLand\Core\Auth;
 use HollywoodLand\Models\Activitat;
+use HollywoodLand\Models\InscripcioActivitat;
 use HollywoodLand\Models\Sala;
 
 Auth::requireRole('treballador', 'admin');
@@ -31,12 +32,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $salaId = trim($_POST['sala_id'] ?? '');
         $salaId = $salaId === '' ? null : (int) $salaId;
 
+        // Data real del calendari (rebutja formats estranys i dies impossibles com 2026-02-31).
+        $dataObj = DateTime::createFromFormat('Y-m-d', $data);
+        $dataValida = $dataObj !== false && $dataObj->format('Y-m-d') === $data;
+
         if (!in_array($tipus, $tipusValids, true)) {
             $error = 'Tipus no vàlid.';
         } elseif ($titol === '' || $data === '' || $hora === '' || $duradaMin <= 0) {
             $error = 'Cal omplir títol, data, hora i una durada superior a 0.';
-        } elseif (!in_array(substr($hora, 3, 2), ['00', '15', '30', '45'], true)) {
+        } elseif (!preg_match('/^([01]\d|2[0-3]):(00|15|30|45)(:00)?$/', $hora)) {
             $error = "L'hora ha de ser en intervals de 15 minuts (00, 15, 30, 45).";
+        } elseif (!$dataValida) {
+            $error = 'La data no és vàlida.';
+        } elseif ($data < date('Y-m-d')) {
+            $error = 'No es pot programar una activitat amb data passada.';
+        } elseif ($salaId !== null && Sala::findById($salaId) === null) {
+            $error = 'La sala seleccionada no existeix.';
+        } elseif ($aforament !== null && $aforament < 1) {
+            $error = "L'aforament ha de ser com a mínim 1 (o buit si no hi ha límit).";
+        } elseif ($accio === 'actualitzar' && $aforament !== null && $aforament < InscripcioActivitat::comptar($id)) {
+            $error = "L'aforament no pot ser inferior a les places ja inscrites.";
         } elseif ($accio === 'crear') {
             Activitat::create($tipus, $titol, $descripcio, $data, $hora, $duradaMin, $aforament, $salaId);
             $success = 'Activitat creada correctament.';

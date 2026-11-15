@@ -47,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Rol no vàlid.';
         } elseif ($id === (int) $usuariActual['id'] && $rol !== $usuariActual['rol']) {
             $error = 'No pots canviar el teu propi rol.';
+        } elseif (($altre = Usuari::findByEmail($email)) !== null && (int) $altre['id'] !== $id) {
+            $error = 'Ja existeix un altre usuari amb aquest email.';
         } else {
             Usuari::update($id, $nom, $email, $rol);
             $success = 'Usuari actualitzat correctament.';

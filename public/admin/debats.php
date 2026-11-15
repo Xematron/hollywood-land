@@ -4,6 +4,7 @@ require __DIR__ . '/../../src/bootstrap.php';
 
 use HollywoodLand\Core\Auth;
 use HollywoodLand\Models\Debat;
+use HollywoodLand\Models\InscripcioDebat;
 use HollywoodLand\Models\Sessio;
 
 Auth::requireRole('treballador', 'admin');
@@ -31,6 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $error = 'Cal triar una sessió i indicar una durada superior a 0.';
         } elseif (Sessio::findById($sessioId) === null) {
             $error = 'La sessió seleccionada no existeix.';
+        } elseif ($aforament !== null && $aforament < 1) {
+            $error = "L'aforament ha de ser com a mínim 1 (o buit si no hi ha límit).";
+        } elseif ($accio === 'actualitzar' && $aforament !== null && $aforament < InscripcioDebat::comptar($id)) {
+            $error = "L'aforament no pot ser inferior a les places ja inscrites.";
         } elseif ($accio === 'crear') {
             Debat::create($sessioId, $titol, $descripcio, $aforament, $duradaMin);
             $success = 'Cine-fòrum creat correctament.';

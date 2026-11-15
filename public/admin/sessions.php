@@ -29,14 +29,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $original = $accio === 'actualitzar' ? Sessio::findById($id) : null;
 
+        // Data real del calendari (rebutja formats estranys i dies impossibles com 2026-02-31).
+        $dataObj = DateTime::createFromFormat('Y-m-d', $data);
+        $dataValida = $dataObj !== false && $dataObj->format('Y-m-d') === $data;
+
         if ($accio === 'actualitzar' && $original !== null && $original['data'] < date('Y-m-d')) {
             $error = 'No es pot editar una sessió que ja ha passat.';
         } elseif ($peliculaId <= 0 || $salaId <= 0 || $data === '' || $hora === '' || $preu <= 0) {
             $error = 'Cal omplir pel·lícula, sala, data, hora i un preu superior a 0.';
-        } elseif (!in_array(substr($hora, 3, 2), ['00', '15', '30', '45'], true)) {
+        } elseif (!preg_match('/^([01]\d|2[0-3]):(00|15|30|45)(:00)?$/', $hora)) {
             $error = "L'hora ha de ser en intervals de 15 minuts (00, 15, 30, 45).";
+        } elseif (!$dataValida) {
+            $error = 'La data no és vàlida.';
         } elseif ($data < date('Y-m-d')) {
             $error = 'No es pot programar una sessió amb data passada.';
+        } elseif (Sala::findById($salaId) === null || !in_array($peliculaId, array_column(Pelicula::all(), 'id'))) {
+            $error = 'La pel·lícula o la sala seleccionada no existeix.';
         } elseif (Sessio::hiHaSolapament($salaId, $data, $hora, $peliculaId, $accio === 'actualitzar' ? $id : null)) {
             $error = 'Ja hi ha una altra sessió a aquesta sala que se solapa amb aquest horari.';
         } elseif ($accio === 'crear') {
