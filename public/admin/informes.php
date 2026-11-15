@@ -20,8 +20,18 @@ if ($dataFi === '') {
     $dataFi = '2026-11-30';
 }
 
+// Data real del calendari en format AAAA-MM-DD (rebutja text lliure i dies impossibles).
+$esDataValida = function (string $data): bool {
+    $obj = DateTime::createFromFormat('Y-m-d', $data);
+    return $obj !== false && $obj->format('Y-m-d') === $data;
+};
+
 $error = null;
-if ($dataInici > $dataFi) {
+if (!$esDataValida($dataInici) || !$esDataValida($dataFi)) {
+    $error = 'Les dates no són vàlides. Fes servir el format AAAA-MM-DD.';
+    $taquillera = [];
+    $ocupacio = [];
+} elseif ($dataInici > $dataFi) {
     $error = 'La data d\'inici no pot ser posterior a la data de fi.';
     $taquillera = [];
     $ocupacio = [];
@@ -56,7 +66,7 @@ if ($dataInici > $dataFi) {
             <input type="date" id="fi" name="fi" class="form-control" value="<?= htmlspecialchars($dataFi) ?>">
         </div>
         <div class="col">
-            <button type="submit" class="btn btn-primary">Filtrar</button>
+            <button type="submit" class="btn btn-dark">Filtrar</button>
         </div>
     </form>
 

@@ -23,4 +23,7 @@ spl_autoload_register(function (string $class): void {
     }
 });
 
+// Cookie de sessió: HttpOnly (no llegible des de JS) i SameSite=Lax (el navegador
+// no l'envia en POST originats des d'altres webs, mitigació bàsica de CSRF).
+session_set_cookie_params(['path' => '/', 'httponly' => true, 'samesite' => 'Lax']);
 session_start();

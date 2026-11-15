@@ -41,7 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($accio === 'eliminar') {
         $id = (int) ($_POST['id'] ?? 0);
 
-        if (Pelicula::delete($id)) {
+        if (!in_array($id, array_column(Pelicula::all(), 'id'))) {
+            $error = 'Pel·lícula no trobada.';
+        } elseif (Pelicula::delete($id)) {
             $success = 'Pel·lícula eliminada correctament.';
         } else {
             $error = 'No es pot eliminar: la pel·lícula té sessions programades.';

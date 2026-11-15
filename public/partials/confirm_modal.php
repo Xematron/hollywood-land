@@ -7,7 +7,7 @@
             </div>
             <div class="modal-body" id="confirmModalBody"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Cancel·la</button>
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Enrere</button>
                 <button type="button" class="btn btn-dark" id="confirmModalBtn">Confirmar</button>
             </div>
         </div>

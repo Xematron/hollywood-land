@@ -7,6 +7,9 @@
 
 DirectoryIndex index.php
 
+# URL inexistent -> 404 propi (amb navbar i footer) en lloc del genèric del hosting.
+ErrorDocument 404 /404.php
+
 RewriteEngine On
 RewriteRule ^$ public/index.php [L]
 RewriteCond %{REQUEST_URI} !^/public/

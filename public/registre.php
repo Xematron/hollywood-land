@@ -11,6 +11,9 @@ if (Auth::isLoggedIn()) {
 }
 
 $error = null;
+// Destí original (ve de login.php); es retorna a login.php, que és qui el valida.
+$redirect = $_POST['redirect'] ?? $_GET['redirect'] ?? '';
+$sufixRedirect = $redirect !== '' ? '?redirect=' . urlencode($redirect) : '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = trim($_POST['nom'] ?? '');
@@ -29,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         Usuari::create($nom, $email, $password, 'client');
 
-        header('Location: login.php');
+        header('Location: login.php' . $sufixRedirect);
         exit;
     }
 }
@@ -50,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post" action="registre.php">
+        <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirect) ?>">
         <div class="mb-3">
             <label for="nom" class="form-label">Nom</label>
             <input type="text" id="nom" name="nom" class="form-control" value="<?= htmlspecialchars($_POST['nom'] ?? '') ?>" required>
@@ -69,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn btn-dark">Registrar-me</button>
     </form>
 
-    <p class="mt-3"><a href="login.php">Ja tinc compte</a></p>
+    <p class="mt-3"><a href="login.php<?= $sufixRedirect ?>">Ja tinc compte</a></p>
 </div>
 <?php require __DIR__ . '/partials/footer.php'; ?>
 </body>

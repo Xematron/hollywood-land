@@ -57,7 +57,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($accio === 'eliminar') {
         $id = (int) ($_POST['id'] ?? 0);
 
-        if (Sessio::delete($id)) {
+        if (Sessio::findById($id) === null) {
+            $error = 'Sessió no trobada.';
+        } elseif (Sessio::delete($id)) {
             $success = 'Sessió eliminada correctament.';
         } else {
             $error = 'No es pot eliminar: la sessió té entrades o debats associats.';

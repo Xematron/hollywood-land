@@ -62,7 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($accio === 'eliminar') {
         $id = (int) ($_POST['id'] ?? 0);
 
-        if (Activitat::delete($id)) {
+        if (Activitat::findById($id) === null) {
+            $error = 'Activitat no trobada.';
+        } elseif (Activitat::delete($id)) {
             $success = 'Activitat eliminada correctament.';
         } else {
             $error = 'No es pot eliminar: l\'activitat té inscripcions associades.';

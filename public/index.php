@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activitat_id'])) {
     $usuariId = (int) Auth::user()['id'];
 
     if ($accio === 'inscriure') {
-        $quantitat = max(1, (int) ($_POST['quantitat'] ?? 1));
+        $quantitat = min(10, max(1, (int) ($_POST['quantitat'] ?? 1))); // màxim 10 persones per inscripció, també al servidor
         $activitatInfo = Activitat::findById($activitatId);
         $inscrits = InscripcioActivitat::comptar($activitatId);
 
@@ -34,8 +34,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['activitat_id'])) {
             }
         }
     } elseif ($accio === 'cancelar') {
-        InscripcioActivitat::cancelar($activitatId, $usuariId);
-        $missatgesActivitat[$activitatId] = ['tipus' => 'success', 'text' => 'Inscripció cancel·lada.'];
+        if (InscripcioActivitat::jaInscrit($activitatId, $usuariId)) {
+            InscripcioActivitat::cancelar($activitatId, $usuariId);
+            $missatgesActivitat[$activitatId] = ['tipus' => 'success', 'text' => 'Inscripció cancel·lada.'];
+        } else {
+            $missatgesActivitat[$activitatId] = ['tipus' => 'warning', 'text' => 'No hi estaves inscrit.'];
+        }
     }
 }
 
@@ -49,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['debat_id'])) {
     $usuariId = (int) Auth::user()['id'];
 
     if ($accio === 'inscriure') {
-        $quantitat = max(1, (int) ($_POST['quantitat'] ?? 1));
+        $quantitat = min(10, max(1, (int) ($_POST['quantitat'] ?? 1))); // màxim 10 persones per inscripció, també al servidor
         $debatInfo = Debat::findById($debatId);
         $inscrits = InscripcioDebat::comptar($debatId);
 
@@ -64,8 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['debat_id'])) {
             }
         }
     } elseif ($accio === 'cancelar') {
-        InscripcioDebat::cancelar($debatId, $usuariId);
-        $missatgesDebat[$debatId] = ['tipus' => 'success', 'text' => 'Inscripció cancel·lada.'];
+        if (InscripcioDebat::jaInscrit($debatId, $usuariId)) {
+            InscripcioDebat::cancelar($debatId, $usuariId);
+            $missatgesDebat[$debatId] = ['tipus' => 'success', 'text' => 'Inscripció cancel·lada.'];
+        } else {
+            $missatgesDebat[$debatId] = ['tipus' => 'warning', 'text' => 'No hi estaves inscrit.'];
+        }
     }
 }
 

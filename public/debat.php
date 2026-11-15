@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $accio = $_POST['accio'] ?? '';
 
     if ($accio === 'inscriure') {
-        $quantitat = max(1, (int) ($_POST['quantitat'] ?? 1));
+        $quantitat = min(10, max(1, (int) ($_POST['quantitat'] ?? 1))); // màxim 10 persones per inscripció, també al servidor
         $inscrits = InscripcioDebat::comptar($debatId);
 
         if ($debat['aforament'] !== null && $inscrits + $quantitat > (int) $debat['aforament']) {
@@ -39,8 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
     } elseif ($accio === 'cancelar') {
-        InscripcioDebat::cancelar($debatId, $usuariId);
-        $missatge = ['tipus' => 'success', 'text' => 'Inscripció cancel·lada.'];
+        if (InscripcioDebat::jaInscrit($debatId, $usuariId)) {
+            InscripcioDebat::cancelar($debatId, $usuariId);
+            $missatge = ['tipus' => 'success', 'text' => 'Inscripció cancel·lada.'];
+        } else {
+            $missatge = ['tipus' => 'warning', 'text' => 'No hi estaves inscrit.'];
+        }
     }
 }
 

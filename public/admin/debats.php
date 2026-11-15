@@ -46,7 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif ($accio === 'eliminar') {
         $id = (int) ($_POST['id'] ?? 0);
 
-        if (Debat::delete($id)) {
+        if (Debat::findById($id) === null) {
+            $error = 'Cine-fòrum no trobat.';
+        } elseif (Debat::delete($id)) {
             $success = 'Cine-fòrum eliminat correctament.';
         } else {
             $error = 'No es pot eliminar: el cine-fòrum té inscripcions associades.';

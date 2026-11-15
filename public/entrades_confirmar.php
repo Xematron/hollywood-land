@@ -64,17 +64,19 @@ foreach ($butacaIdsSeleccionades as $butacaId) {
 }
 
 $totalPagat = count($comprades) * (float) $sessio['preu'];
+// El títol reflecteix el resultat real: si no s'ha comprat cap butaca, no es pot dir "confirmada".
+$titolPagina = empty($comprades) ? 'Compra no realitzada' : 'Compra confirmada';
 ?>
 <!DOCTYPE html>
 <html lang="ca">
 <head>
-<?php $pageTitle = 'Compra confirmada — Hollywood Land'; require __DIR__ . '/partials/head.php'; ?>
+<?php $pageTitle = $titolPagina . ' — Hollywood Land'; require __DIR__ . '/partials/head.php'; ?>
 </head>
 <body>
 <?php require __DIR__ . '/partials/navbar.php'; ?>
 
 <div class="container flex-grow-1">
-    <h1 class="mb-4">Compra confirmada</h1>
+    <h1 class="mb-4"><?= $titolPagina ?></h1>
 
     <?php if (empty($comprades) && empty($fallides)): ?>
         <div class="alert alert-warning">No has seleccionat cap butaca.</div>

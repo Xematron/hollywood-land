@@ -11,6 +11,8 @@ if (Auth::isLoggedIn()) {
 }
 
 $error = null;
+// Destí on tornar després d'entrar; es valida just abans de redirigir.
+$redirect = $_POST['redirect'] ?? $_GET['redirect'] ?? '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = trim($_POST['email'] ?? '');
@@ -24,7 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['nom'] = $usuari['nom'];
         $_SESSION['rol'] = $usuari['rol'];
 
-        $redirect = $_POST['redirect'] ?? '';
         if ($redirect === '' || $redirect[0] !== '/' || str_starts_with($redirect, '//')) {
             $redirect = '/index.php';
         }
@@ -52,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php endif; ?>
 
     <form method="post" action="login.php">
-        <input type="hidden" name="redirect" value="<?= htmlspecialchars($_GET['redirect'] ?? '') ?>">
+        <input type="hidden" name="redirect" value="<?= htmlspecialchars($redirect) ?>">
         <div class="mb-3">
             <label for="email" class="form-label">Email</label>
             <input type="email" id="email" name="email" class="form-control" required>
@@ -64,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn btn-dark">Entrar</button>
     </form>
 
-    <p class="mt-3"><a href="registre.php">Crear compte nou</a></p>
+    <p class="mt-3"><a href="registre.php<?= $redirect !== '' ? '?redirect=' . urlencode($redirect) : '' ?>">Crear compte nou</a></p>
 </div>
 <?php require __DIR__ . '/partials/footer.php'; ?>
 </body>

@@ -58,9 +58,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($id === (int) $usuariActual['id']) {
             $error = 'No et pots eliminar a tu mateix.';
+        } elseif (!in_array($id, array_column(Usuari::all(), 'id'))) {
+            $error = 'Usuari no trobat.';
         } else {
-            Usuari::delete($id);
-            $success = 'Usuari eliminat correctament.';
+            try {
+                Usuari::delete($id);
+                $success = 'Usuari eliminat correctament.';
+            } catch (PDOException $e) {
+                // La clau forana de BD impedeix esborrar usuaris amb històric de compres/inscripcions.
+                $error = "No es pot eliminar: l'usuari té entrades o inscripcions associades.";
+            }
         }
     }
 }
